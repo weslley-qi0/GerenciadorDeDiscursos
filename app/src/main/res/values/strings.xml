@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">GerenciadorDeDiscursos</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    // Txt Messes
+    <string name="txt_mes_jan">Janeiro</string>
+    <string name="txt_mes_fev">Fevereiro</string>
+    <string name="txt_mes_mar">Março</string>
+    <string name="txt_mes_abr">Abril</string>
+    <string name="txt_mes_mai">Maio</string>
+    <string name="txt_mes_jun">Junho</string>
+    <string name="txt_mes_jul">Julho</string>
+    <string name="txt_mes_ago">Agosto</string>
+    <string name="txt_mes_set">Setembro</string>
+    <string name="txt_mes_out">Outubro</string>
+    <string name="txt_mes_nov">Novembro</string>
+    <string name="txt_mes_dez">Dezembro</string>
+
+    //Strings NavButton
+    <string name="title_congregacoes">Congregações</string>
+    <string name="title_oradores">Oradores</string>
+    <string name="title_agenda">Agenda</string>
+    <string name="title_discursos">Discursos</string>
+    <string name="title_settings">Configurações</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>

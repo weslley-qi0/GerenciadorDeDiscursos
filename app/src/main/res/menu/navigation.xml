@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_congregacao"
+        android:icon="@drawable/ic_nav_view_congregacao"
+        android:title="@string/title_congregacoes" />
+
+    <item
+        android:id="@+id/navigation_oradores"
+        android:icon="@drawable/ic_nav_view_oradores"
+        android:title="@string/title_oradores" />
+
+    <item
+        android:id="@+id/navigation_agenda"
+        android:icon="@drawable/ic_nav_view_agenda"
+        android:title="@string/title_agenda" />
+
+    <item
+        android:id="@+id/navigation_discursos"
+        android:icon="@drawable/ic_nav_view_discursos"
+        android:title="@string/title_discursos" />
+
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/ic_nav_view_settings"
+        android:title="@string/title_settings" />
+
+</menu>
