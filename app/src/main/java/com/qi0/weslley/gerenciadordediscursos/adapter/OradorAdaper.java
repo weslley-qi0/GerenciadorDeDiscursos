@@ -37,7 +37,7 @@ public class OradorAdaper extends RecyclerView.Adapter<OradorAdaper.MyViewHolder
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Orador orador = oradores.get(position);
         holder.nomeOrador.setText(orador.getNome());
-        holder.congregacao.setText(orador.getCongregacao());
+        holder.congregacao.setText(orador.getCongregacaoTest());
         holder.ultimaVisita.setText(orador.getUltimaVisita());
     }
 

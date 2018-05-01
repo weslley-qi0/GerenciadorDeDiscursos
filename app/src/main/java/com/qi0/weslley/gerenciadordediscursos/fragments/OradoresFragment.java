@@ -2,6 +2,7 @@ package com.qi0.weslley.gerenciadordediscursos.fragments;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,8 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 
 import com.qi0.weslley.gerenciadordediscursos.R;
+import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
+import com.qi0.weslley.gerenciadordediscursos.activitys.DetalheActivity;
 import com.qi0.weslley.gerenciadordediscursos.adapter.OradorAdaper;
 import com.qi0.weslley.gerenciadordediscursos.helper.RecyclerItemClickListener;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
@@ -82,8 +85,9 @@ public class OradoresFragment extends BaseFragment {
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-
-
+                Intent intentOradorDealhes = new Intent(getActivity(), DetalheActivity.class);
+                intentOradorDealhes.putExtra("qualFragmentAbrir", "DetalheOradorFragment");
+                startActivity(intentOradorDealhes);
             }
 
             @Override
@@ -103,7 +107,7 @@ public class OradoresFragment extends BaseFragment {
         for (int i = 0; i<= 50; i++){
             Orador orador = new Orador();
             orador.setNome("Weslley " + i);
-            orador.setCongregacao("Nome da Congregação " + i);
+            orador.setCongregacaoTest("Nome da Congregação " + i);
             orador.setUltimaVisita("15/10/18");
             oradores.add(orador);
         }

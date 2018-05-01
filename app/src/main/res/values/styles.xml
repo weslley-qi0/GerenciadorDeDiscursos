@@ -23,6 +23,7 @@
     </style>
 
     //Style para o FloatLabel do ImputTextLayout
+
     <style name="myHintTextAppearance" parent="@android:style/TextAppearance">
         <item name="android:textColor">@color/colorAccent</item>
         <item name="android:textSize">16sp</item>

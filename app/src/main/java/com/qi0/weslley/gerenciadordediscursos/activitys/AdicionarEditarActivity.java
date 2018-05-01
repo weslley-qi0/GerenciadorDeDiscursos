@@ -36,7 +36,7 @@ public class AdicionarEditarActivity extends BaseActivity {
             getSupportActionBar().setTitle("Novo Discurso");
         }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add_editar);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -21,10 +21,14 @@
         </activity>
         <activity
             android:name=".activitys.AdicionarEditarActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:parentActivityName=".activitys.MainActivity"
             android:label="@string/title_activity_adicionar_editar"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:parentActivityName=".activitys.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activitys.DetalheActivity"
+            android:label="@string/title_activity_detalhe"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

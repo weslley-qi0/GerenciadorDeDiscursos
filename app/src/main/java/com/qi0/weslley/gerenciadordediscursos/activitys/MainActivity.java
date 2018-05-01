@@ -1,6 +1,7 @@
 package com.qi0.weslley.gerenciadordediscursos.activitys;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
