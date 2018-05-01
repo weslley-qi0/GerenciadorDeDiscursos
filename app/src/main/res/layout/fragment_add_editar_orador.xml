@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroud_form_orador"
+    tools:context=".fragments.AddEditarOradorFragment">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:paddingLeft="2dp">
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_orador_detalhe_fragment"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/img_padrao"
+                app:civ_border_color="@color/medium_text_disabled"
+                app:civ_border_width="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_camera_fragment_novo_orador"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                app:backgroundTint="@color/colorPrimary"
+                app:elevation="0dp"
+                app:fabSize="mini"
+                app:layout_constraintBottom_toBottomOf="@+id/img_orador_detalhe_fragment"
+                app:layout_constraintEnd_toEndOf="@+id/img_orador_detalhe_fragment"
+                app:srcCompat="@drawable/ic_camera"
+                tools:ignore="VectorDrawableCompat" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:orientation="vertical"
+                android:padding="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/img_orador_detalhe_fragment"
+                app:layout_constraintVertical_bias="1.0">
+
+                <RatingBar
+                    android:id="@+id/ratindBar_orador"
+                    style="@style/Widget.AppCompat.RatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:numStars="5"
+                    android:rating="3"
+                    android:scaleX="0.7"
+                    android:scaleY="0.7"
+                    android:stepSize="1" />
+
+                <TextView
+                    android:id="@+id/tv_rating_orador"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Padrão" />
+
+                <com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipChildren="false"
+                    app:hintTextAppearance="@style/myHintTextAppearance">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_marginBottom="3dp"
+                        android:background="@drawable/background_edittext"
+                        android:drawableLeft="@drawable/ic_person_black"
+                        android:drawablePadding="4dp"
+                        android:hint="Nome"
+                        android:inputType="textCapWords|textPersonName"
+                        android:padding="8dp"
+                        android:translationY="3dp" />
+
+                </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
+
+                <com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:clipChildren="false"
+                    app:hintTextAppearance="@style/myHintTextAppearance">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_marginBottom="3dp"
+                        android:background="@drawable/background_edittext"
+                        android:drawableLeft="@drawable/ic_congregacao_black"
+                        android:drawablePadding="4dp"
+                        android:hint="Congregaçâo"
+                        android:inputType="textCapWords"
+                        android:padding="8dp"
+                        android:translationY="3dp" />
+
+                </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
+
+                <com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:clipChildren="false"
+                    app:hintTextAppearance="@style/myHintTextAppearance">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_marginBottom="3dp"
+                        android:background="@drawable/background_edittext"
+                        android:drawableLeft="@drawable/ic_phone"
+                        android:drawablePadding="4dp"
+                        android:hint="Telefone"
+                        android:inputType="phone"
+                        android:padding="8dp"
+                        android:translationY="3dp" />
+
+                </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
+
+                <com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:clipChildren="false"
+                    app:hintTextAppearance="@style/myHintTextAppearance">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_marginBottom="3dp"
+                        android:background="@drawable/background_edittext"
+                        android:drawableLeft="@drawable/ic_email"
+                        android:drawablePadding="4dp"
+                        android:hint="Email"
+                        android:inputType="textEmailAddress"
+                        android:padding="8dp"
+                        android:translationY="3dp" />
+
+                </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
+
+            </LinearLayout>
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
+</FrameLayout>

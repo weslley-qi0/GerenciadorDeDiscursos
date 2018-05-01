@@ -19,6 +19,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activitys.AdicionarEditarActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:parentActivityName=".activitys.MainActivity"
+            android:label="@string/title_activity_adicionar_editar"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

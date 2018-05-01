@@ -82,28 +82,22 @@ public class MainActivity extends BaseActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String txt = "";
                 Intent intent = null;
                 switch (navigation.getSelectedItemId()){
                     case R.id.navigation_congregacao:
-                        txt = "Congregação";
-                        //intent = new Intent(getApplicationContext(), AdicionarEditarActivity.class);
-                        //intent.putExtra("qualFragmentAbrir", "AddCongregacaoFragment");
+                        intent = new Intent(getApplicationContext(), AdicionarEditarActivity.class);
+                        intent.putExtra("qualFragmentAbrir", "AddCongregacaoFragment");
                         break;
                     case R.id.navigation_oradores:
-                        txt = "Oradores";
-                        //intent = new Intent(getApplicationContext(), AdicionarEditarActivity.class);
-                        //intent.putExtra("qualFragmentAbrir", "AddOradorFragment");
+                        intent = new Intent(getApplicationContext(), AdicionarEditarActivity.class);
+                        intent.putExtra("qualFragmentAbrir", "AddOradorFragment");
                         break;
                     case R.id.navigation_discursos:
-                        //intent = new Intent(getApplicationContext(), AdicionarEditarActivity.class);
-                        //intent.putExtra("qualFragmentAbrir", "AddDiscursosFragment");
-                        txt = "Discursos";
+                        intent = new Intent(getApplicationContext(), AdicionarEditarActivity.class);
+                        intent.putExtra("qualFragmentAbrir", "AddDiscursosFragment");
                         break;
                 }
-
-                Toast.makeText(MainActivity.this, txt, Toast.LENGTH_SHORT).show();
-                //startActivity(intent);
+                startActivity(intent);
             }
         });
     }

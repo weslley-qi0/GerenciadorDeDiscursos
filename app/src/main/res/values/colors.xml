@@ -4,7 +4,9 @@
     <color name="colorPrimaryDark">#323336</color>
     <color name="colorAccent">#ffab03</color>
 
-    <color name="backgroud_recycle_agenda">#ace1e0e0</color>
+    <color name="backgroud_recycle_agenda">#c2cac9c9</color>
+    <color name="backgroud_card">#2D3035</color>
+    <color name="backgroud_form_orador">#abf1eeee</color>
 
     <color name="primary">#3C515C</color>
     <color name="primary_dark">#142E3C</color>
