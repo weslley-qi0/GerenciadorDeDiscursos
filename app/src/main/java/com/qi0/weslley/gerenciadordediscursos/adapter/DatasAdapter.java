@@ -27,8 +27,8 @@ public class DatasAdapter extends RecyclerView.Adapter<DatasAdapter.MyViewHolder
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View itemView = inflater.inflate(R.layout.item_agenda, parent, false);
-        //View view = mInflater.inflate(R.layout.item_agenda, parent, false);
+        View itemView = inflater.inflate(R.layout.item_agenda_0, parent, false);
+        //View view = mInflater.inflate(R.layout.item_agenda_0, parent, false);
 
         return new MyViewHolder(itemView);
     }

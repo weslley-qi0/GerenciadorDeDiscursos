@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.qi0.weslley.gerenciadordediscursos">
 
     <application
@@ -24,11 +25,12 @@
             android:label="@string/title_activity_adicionar_editar"
             android:parentActivityName=".activitys.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            tools:targetApi="jelly_bean" />
         <activity
             android:name=".activitys.DetalheActivity"
             android:label="@string/title_activity_detalhe"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

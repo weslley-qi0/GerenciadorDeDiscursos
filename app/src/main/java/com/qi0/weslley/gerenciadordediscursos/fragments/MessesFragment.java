@@ -8,12 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.qi0.weslley.gerenciadordediscursos.R;
+import com.qi0.weslley.gerenciadordediscursos.adapter.AgendaAdapter;
 import com.qi0.weslley.gerenciadordediscursos.adapter.DatasAdapter;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,7 +28,9 @@ public class MessesFragment extends BaseFragment {
     int ano = 2018;
 
     ArrayList datas = new ArrayList();
+    List<Date> datasList = new ArrayList();
     DatasAdapter adapter;
+    AgendaAdapter agendaAdapter;
 
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
@@ -59,9 +64,14 @@ public class MessesFragment extends BaseFragment {
     }
 
     private void atualizarView() {
-        datas = pegarDatasDoDomingos(mes, ano);
-        adapter = new DatasAdapter(getContext(), datas);
-        recyclerView.setAdapter(adapter);
+
+        //datas = pegarDatasDoDomingos(mes, ano);
+        datasList = pegarListaDataDoDomingos(mes, ano);
+
+        //adapter = new DatasAdapter(getContext(), datas);
+        agendaAdapter = new AgendaAdapter(getContext(), datasList);
+
+        recyclerView.setAdapter(agendaAdapter);
     }
 
     public ArrayList pegarDatasDoDomingos(int mes, int ano) {
@@ -84,6 +94,29 @@ public class MessesFragment extends BaseFragment {
         } while (c.get(Calendar.DAY_OF_MONTH) != 1);
 
         return datas;
+    }
+
+    public List<Date> pegarListaDataDoDomingos(int mes, int ano) {
+
+        // cria um calendário na data 01/mes/ano
+        Calendar c = new GregorianCalendar(ano, mes, 1);
+        // Pega a Data e formata de Acordo com a Região Ex: 00/00/00
+        //DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
+        DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
+
+        do {
+            // o dia da semana ecolhido é domingo?
+            if (c.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+                //datas.add(String.valueOf(df.format(c.getTime())));
+                datasList.add(c.getTime());
+            }
+            // incrementa um dia no calendário
+            c.roll(Calendar.DAY_OF_MONTH, true);
+
+            // enquanto o dia do mês atual for diferente de 1
+        } while (c.get(Calendar.DAY_OF_MONTH) != 1);
+
+        return datasList;
     }
 
     /*@Override
