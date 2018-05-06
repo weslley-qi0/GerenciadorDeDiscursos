@@ -1,17 +1,13 @@
 package com.qi0.weslley.gerenciadordediscursos.activitys;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.fragments.AgendaFragment;
@@ -76,7 +72,7 @@ public class MainActivity extends BaseActivity {
         fab = findViewById(R.id.fab);
         fab.hide();
 
-        navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation = findViewById(R.id.navigation);
         navigation.setSelectedItemId(R.id.navigation_agenda);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 

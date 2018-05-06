@@ -94,6 +94,7 @@
                     app:hintTextAppearance="@style/myHintTextAppearance">
 
                     <android.support.design.widget.TextInputEditText
+                        android:id="@+id/edt_nome_orador_fragmente_add_orador"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
                         android:layout_marginBottom="3dp"
@@ -115,6 +116,7 @@
                     app:hintTextAppearance="@style/myHintTextAppearance">
 
                     <android.support.design.widget.TextInputEditText
+                        android:id="@+id/edt_congregacao_fragmente_add_orador"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
                         android:layout_marginBottom="3dp"
@@ -136,6 +138,7 @@
                     app:hintTextAppearance="@style/myHintTextAppearance">
 
                     <android.support.design.widget.TextInputEditText
+                        android:id="@+id/edt_telefone_fragmente_add_orador"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
                         android:layout_marginBottom="3dp"
@@ -157,6 +160,7 @@
                     app:hintTextAppearance="@style/myHintTextAppearance">
 
                     <android.support.design.widget.TextInputEditText
+                        android:id="@+id/edt_emale_fragmente_add_orador"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
                         android:layout_marginBottom="3dp"
@@ -173,6 +177,7 @@
             </LinearLayout>
 
         </android.support.constraint.ConstraintLayout>
+
     </android.support.v4.widget.NestedScrollView>
 
 </FrameLayout>

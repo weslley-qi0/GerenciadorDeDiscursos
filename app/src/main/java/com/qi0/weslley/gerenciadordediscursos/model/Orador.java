@@ -105,4 +105,10 @@ public class Orador {
     public void setRatingOrador(float ratingOrador) {
         this.ratingOrador = ratingOrador;
     }
+
+    @Override
+    public String toString() {
+        return nome +"\n" +congregacaoTest +"\n"+
+                 telefone+ "\n" + email ;
+    }
 }
