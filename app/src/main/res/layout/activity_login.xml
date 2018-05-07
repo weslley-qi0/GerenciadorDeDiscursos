@@ -116,9 +116,9 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:padding="10dp"
                 android:gravity="center"
-                android:text="Cadastre-se"
+                android:text="CADASTRE-SE"
                 android:textColor="@color/white"
                 android:textStyle="bold" />
 

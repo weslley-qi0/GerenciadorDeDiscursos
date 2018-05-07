@@ -38,4 +38,11 @@ dependencies {
 
     // Circular ImageView
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+
+    // Implementações do Firebase
+    implementation 'com.google.firebase:firebase-core:15.0.2'
+    implementation 'com.google.firebase:firebase-database:15.0.1'
+    implementation 'com.google.firebase:firebase-storage:15.0.2'
+    implementation 'com.google.firebase:firebase-auth:15.1.0'
 }
+apply plugin: 'com.google.gms.google-services'
