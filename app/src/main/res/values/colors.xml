@@ -10,6 +10,7 @@
 
     <color name="backgroud_item_checked_buttom_nav">#FFFFFFFF</color>
     <color name="backgroud_item_buttom_nav">#80838b</color>
+    <color name="togle_password">#a6dadada</color>
 
     <color name="primary">#3C515C</color>
     <color name="primary_dark">#142E3C</color>

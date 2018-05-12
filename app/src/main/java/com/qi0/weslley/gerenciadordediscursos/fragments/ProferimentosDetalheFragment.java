@@ -19,7 +19,7 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ProferimentosDetalheFragment extends Fragment {
+public class ProferimentosDetalheFragment extends BaseFragment {
 
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;

@@ -18,6 +18,11 @@
     <string name="txt_mes_nov">Novembro</string>
     <string name="txt_mes_dez">Dezembro</string>
 
+    // Recusos da Camera
+    <string name="escolher_foto">Escolher Foto</string>
+    <string name="tirar_foto">Tirar Foto</string>
+    <string name="alterar_foto">Alterar Foto</string>
+
     //Strings NavButton
     <string name="title_congregacoes">Congregações</string>
     <string name="title_oradores">Oradores</string>

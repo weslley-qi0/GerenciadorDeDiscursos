@@ -1,8 +1,9 @@
 package com.qi0.weslley.gerenciadordediscursos.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Orador {
+public class Orador implements Serializable{
 
     private String id;
     private String nome;
@@ -11,6 +12,7 @@ public class Orador {
     private String telefone;
     private String email;
     private String ultimaVisita;
+    private String urlFotoOrador;
     private List<Discurso> discursoListOrador;
     private float ratingOrador;
 
@@ -88,6 +90,14 @@ public class Orador {
 
     public void setUltimaVisita(String ultimaVisita) {
         this.ultimaVisita = ultimaVisita;
+    }
+
+    public String getUrlFotoOrador() {
+        return urlFotoOrador;
+    }
+
+    public void setUrlFotoOrador(String urlFotoOrador) {
+        this.urlFotoOrador = urlFotoOrador;
     }
 
     public List<Discurso> getDiscursoListOrador() {

@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.database.DatabaseReference;
-import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguraçãoFirebase;
+import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.model.Usuario;
 
@@ -34,7 +34,7 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastro_usuario);
 
-        firebaseAuth = ConfiguraçãoFirebase.getFirebaseAuth();
+        firebaseAuth = ConfiguracaoFirebase.getAuth();
 
         Button btnCadastrar = findViewById(R.id.bt_cadastrar_usuario);
         TextView tvVoltar = findViewById(R.id.tv_voltar_cadastro_usuario);
@@ -144,7 +144,7 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
     }
 
     public void salvarUsuario(){
-        databaseReference = ConfiguraçãoFirebase.getFirebaseDatabase();
+        databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
         databaseReference.child("usuarios").child(userUID).setValue(usuario);
         databaseReference.child("user_data").child(userUID).child("oradores").push();
 

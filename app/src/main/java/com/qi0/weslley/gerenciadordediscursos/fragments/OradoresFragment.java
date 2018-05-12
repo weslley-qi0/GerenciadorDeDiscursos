@@ -15,8 +15,13 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
-import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
 import com.qi0.weslley.gerenciadordediscursos.activitys.DetalheActivity;
 import com.qi0.weslley.gerenciadordediscursos.adapter.OradorAdaper;
 import com.qi0.weslley.gerenciadordediscursos.helper.RecyclerItemClickListener;
@@ -32,8 +37,14 @@ public class OradoresFragment extends BaseFragment {
 
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
+    OradorAdaper adapter;
 
-    ArrayList oradores = new ArrayList();
+    ArrayList oradoresList = new ArrayList();
+
+    DatabaseReference databaseReference;
+    FirebaseAuth firebaseAuth;
+    ValueEventListener valueEventListenerOradores;
+    String userUID;
 
     public OradoresFragment() {
         // Required empty public constructor
@@ -49,7 +60,10 @@ public class OradoresFragment extends BaseFragment {
 
         setHasOptionsMenu(true);
 
-        mokeOradores();
+        databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
+        firebaseAuth = ConfiguracaoFirebase.getAuth();
+
+        userUID = firebaseAuth.getCurrentUser().getUid();
 
         recyclerView = view.findViewById(R.id.recycle_view_oradores);
         layoutManager = new LinearLayoutManager(getActivity());
@@ -57,7 +71,7 @@ public class OradoresFragment extends BaseFragment {
         //recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
 
-        OradorAdaper adapter = new OradorAdaper(oradores, getContext());
+        adapter = new OradorAdaper(oradoresList, getContext());
 
         recyclerView.setAdapter(adapter);
 
@@ -85,8 +99,10 @@ public class OradoresFragment extends BaseFragment {
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+                Orador orador = (Orador) oradoresList.get(position);
                 Intent intentOradorDealhes = new Intent(getActivity(), DetalheActivity.class);
                 intentOradorDealhes.putExtra("qualFragmentAbrir", "DetalheOradorFragment");
+                intentOradorDealhes.putExtra("orador", orador);
                 startActivity(intentOradorDealhes);
             }
 
@@ -103,14 +119,10 @@ public class OradoresFragment extends BaseFragment {
         return view;
     }
 
-    private void mokeOradores() {
-        for (int i = 0; i<= 50; i++){
-            Orador orador = new Orador();
-            orador.setNome("Weslley " + i);
-            orador.setCongregacaoTest("Nome da Congregação " + i);
-            orador.setUltimaVisita("15/10/18");
-            oradores.add(orador);
-        }
+    @Override
+    public void onStart() {
+        super.onStart();
+        pegarOradores();
     }
 
     private void runLayoutAnimation(final RecyclerView recyclerView) {
@@ -122,4 +134,27 @@ public class OradoresFragment extends BaseFragment {
         recyclerView.getAdapter().notifyDataSetChanged();
         recyclerView.scheduleLayoutAnimation();
     }
+
+    private void pegarOradores() {
+
+        valueEventListenerOradores = databaseReference.child("user_data").child(userUID).child("oradores").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                oradoresList.clear();
+                for (DataSnapshot dados : dataSnapshot.getChildren()){
+                    Orador orador = dados.getValue(Orador.class);
+                    oradoresList.add(orador);
+                }
+
+                adapter.notifyDataSetChanged();
+                //getSupportActionBar().setTitle(String.valueOf(oradoresList.size()));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 }

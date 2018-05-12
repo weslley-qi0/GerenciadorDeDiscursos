@@ -16,7 +16,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguraçãoFirebase;
+import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.model.Usuario;
 
@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        firebaseAuth = ConfiguraçãoFirebase.getFirebaseAuth();
+        firebaseAuth = ConfiguracaoFirebase.getAuth();
         if (firebaseAuth.getCurrentUser() != null){
             sendToMain();
         }
@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void logarUsuario(){
-        firebaseAuth = ConfiguraçãoFirebase.getFirebaseAuth();
+        firebaseAuth = ConfiguracaoFirebase.getAuth();
         firebaseAuth.signInWithEmailAndPassword(
                 usuario.getEmail(), usuario.getSenha()
         ).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {

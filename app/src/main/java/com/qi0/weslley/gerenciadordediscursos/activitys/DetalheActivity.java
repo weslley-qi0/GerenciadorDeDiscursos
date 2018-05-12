@@ -1,5 +1,6 @@
 package com.qi0.weslley.gerenciadordediscursos.activitys;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,6 +13,7 @@ import android.view.View;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.fragments.DetalheOradorFragment;
 import com.qi0.weslley.gerenciadordediscursos.fragments.ProferimentosDetalheFragment;
+import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 
 public class DetalheActivity extends BaseActivity {
 
@@ -22,18 +24,26 @@ public class DetalheActivity extends BaseActivity {
 
         /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);*/
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setElevation(0);
 
         String fragmentAbrir = (String) getIntent().getCharSequenceExtra("qualFragmentAbrir");
 
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //getSupportActionBar().setElevation(0);
+        Intent intent = getIntent();
+        Orador oradorSelecionado = (Orador) intent.getSerializableExtra("orador");
 
         if (fragmentAbrir.equals("DetalheCongregacaoFragment")){
             replaceFragment(R.id.fragment_container_detalhe, new Fragment());
             //getSupportActionBar().setTitle("Detalhe Congregação");
+
         }else if (fragmentAbrir.equals("DetalheOradorFragment")){
-            replaceFragment(R.id.fragment_container_detalhe, new DetalheOradorFragment());
+
+            Bundle bundle = new Bundle();bundle.putSerializable("oradorSelecionado", oradorSelecionado);
+            DetalheOradorFragment detalheOradorFragment = new DetalheOradorFragment();
+            detalheOradorFragment.setArguments(bundle);
+            replaceFragment(R.id.fragment_container_detalhe, detalheOradorFragment);
             //getSupportActionBar().setTitle("Detalhe Orador");
+
         }else if (fragmentAbrir.equals("DetalheDiscursoFragment")){
             replaceFragment(R.id.fragment_container_detalhe, new Fragment());
             //getSupportActionBar().setTitle("Detalhe Discurso");

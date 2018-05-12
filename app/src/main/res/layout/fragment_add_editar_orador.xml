@@ -13,13 +13,12 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="2dp"
-            android:paddingLeft="2dp">
+            android:layout_height="wrap_content">
+
 
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/img_orador_detalhe_fragment"
+                android:id="@+id/img_orador_cadastro_fragment"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_gravity="center"
@@ -29,12 +28,9 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:src="@drawable/img_padrao"
-                app:civ_border_color="@color/medium_text_disabled"
-                app:civ_border_width="2dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fab_camera_fragment_novo_orador"
@@ -45,8 +41,8 @@
                 app:backgroundTint="@color/colorPrimary"
                 app:elevation="0dp"
                 app:fabSize="mini"
-                app:layout_constraintBottom_toBottomOf="@+id/img_orador_detalhe_fragment"
-                app:layout_constraintEnd_toEndOf="@+id/img_orador_detalhe_fragment"
+                app:layout_constraintBottom_toBottomOf="@+id/img_orador_cadastro_fragment"
+                app:layout_constraintEnd_toEndOf="@+id/img_orador_cadastro_fragment"
                 app:srcCompat="@drawable/ic_camera"
                 tools:ignore="VectorDrawableCompat" />
 
@@ -65,7 +61,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/img_orador_detalhe_fragment"
+                app:layout_constraintTop_toBottomOf="@+id/img_orador_cadastro_fragment"
                 app:layout_constraintVertical_bias="1.0">
 
                 <RatingBar
@@ -175,6 +171,37 @@
                 </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
 
             </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/frame_progress_cadastro"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ProgressBar
+                        android:id="@+id/progressBar_cadastro_orador"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="252dp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </android.support.constraint.ConstraintLayout>
+            </FrameLayout>
 
         </android.support.constraint.ConstraintLayout>
 
