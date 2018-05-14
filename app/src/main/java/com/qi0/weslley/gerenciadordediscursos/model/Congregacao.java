@@ -1,6 +1,8 @@
 package com.qi0.weslley.gerenciadordediscursos.model;
 
-public class Congregacao {
+import java.io.Serializable;
+
+public class Congregacao implements Serializable {
 
     private String nomeCongregacao;
     private String cidadeCongregação;
@@ -38,5 +40,10 @@ public class Congregacao {
 
     public void setQuantOradores(int quantOradores) {
         this.quantOradores = quantOradores;
+    }
+
+    @Override
+    public String toString() {
+        return nomeCongregacao;
     }
 }

@@ -8,7 +8,6 @@ public class Orador implements Serializable{
     private String id;
     private String nome;
     private Congregacao congregacao;
-    private String congregacaoTest;
     private String telefone;
     private String email;
     private String ultimaVisita;
@@ -19,21 +18,16 @@ public class Orador implements Serializable{
     public Orador() {
     }
 
-    public Orador(String id, String nome, Congregacao congregacao, String telefone, String email, String ultimaVisita, List<Discurso> discursoListOrador, float ratingOrador) {
+    public Orador(String id, String nome, Congregacao congregacao, String telefone, String email, String ultimaVisita, String urlFotoOrador, List<Discurso> discursoListOrador, float ratingOrador) {
         this.id = id;
         this.nome = nome;
         this.congregacao = congregacao;
         this.telefone = telefone;
         this.email = email;
         this.ultimaVisita = ultimaVisita;
+        this.urlFotoOrador = urlFotoOrador;
         this.discursoListOrador = discursoListOrador;
         this.ratingOrador = ratingOrador;
-    }
-
-    public Orador(String nome, String congregacaoTest, String ultimaVisita) {
-        this.nome = nome;
-        this.congregacaoTest = congregacaoTest;
-        this.ultimaVisita = ultimaVisita;
     }
 
     public String getId() {
@@ -58,14 +52,6 @@ public class Orador implements Serializable{
 
     public void setCongregacao(Congregacao congregacao) {
         this.congregacao = congregacao;
-    }
-
-    public String getCongregacaoTest() {
-        return congregacaoTest;
-    }
-
-    public void setCongregacaoTest(String congregacaoTest) {
-        this.congregacaoTest = congregacaoTest;
     }
 
     public String getTelefone() {
@@ -114,11 +100,5 @@ public class Orador implements Serializable{
 
     public void setRatingOrador(float ratingOrador) {
         this.ratingOrador = ratingOrador;
-    }
-
-    @Override
-    public String toString() {
-        return nome +"\n" +congregacaoTest +"\n"+
-                 telefone+ "\n" + email ;
     }
 }

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.qi0.weslley.gerenciadordediscursos.R;
+import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 
 /**
@@ -29,6 +30,7 @@ public class InfoOradorFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_info_orador, container, false);
 
         Orador oradorSelecionado = (Orador) getArguments().getSerializable("oradorSelecionado");
+        Congregacao congregacao = oradorSelecionado.getCongregacao();
 
         TextView tvCardNome = view.findViewById(R.id.tv_card_nome_detalhe_orador);
         TextView tvCardCongregacao = view.findViewById(R.id.tv_card_cangragacao_detalhe_orador);
@@ -39,7 +41,7 @@ public class InfoOradorFragment extends BaseFragment {
         TextView tvCardNumerosAlterados = view.findViewById(R.id.tv_card_numero_alterados_detalhe_orador);
 
         tvCardNome.setText(oradorSelecionado.getNome());
-        //tvCardCongregacao.setText(oradorSelecionado.getCongregacao());
+        tvCardCongregacao.setText(congregacao.getNomeCongregacao());
         tvCardTelefone.setText(oradorSelecionado.getTelefone());
         tvCardEmail.setText(oradorSelecionado.getEmail());
         //tvCardNumerosFeitos.setText(oradorSelecionado.getNome());

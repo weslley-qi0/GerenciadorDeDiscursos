@@ -261,51 +261,20 @@
         android:layout_height="match_parent"
         android:paddingBottom="20dp">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/img_orador_detalhe_fragment"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_gravity="center"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:src="@drawable/img_padrao"
-            app:civ_border_color="@color/white"
-            app:civ_border_width="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_camera_fragment_novo_orador"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            app:backgroundTint="@color/colorPrimary"
-            app:elevation="0dp"
-            app:fabSize="mini"
-            app:layout_constraintBottom_toBottomOf="@+id/img_orador_detalhe_fragment"
-            app:layout_constraintEnd_toEndOf="@+id/img_orador_detalhe_fragment"
-            app:srcCompat="@drawable/ic_camera"
-            tools:ignore="VectorDrawableCompat" />
-
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="65dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/img_orador_detalhe_fragment">
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout
                 android:id="@+id/customTextInputLayout2"
@@ -334,13 +303,12 @@
                     android:drawableLeft="@drawable/ic_person_cadastro_usuario"
                     android:drawablePadding="5dp"
                     android:hint="Nome"
-                    android:textColor="@color/white"
                     android:inputType="textCapWords|textPersonName"
                     android:padding="8dp"
+                    android:textColor="@color/white"
                     android:translationY="3dp" />
 
             </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
-
 
 
             <com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout
@@ -369,10 +337,10 @@
                     android:background="@drawable/background_edittext_cadastro"
                     android:drawableLeft="@drawable/ic_congregacao_cadastro_usuario"
                     android:drawablePadding="5dp"
-                    android:textColor="@color/white"
                     android:hint="Congregação"
                     android:inputType="textCapWords|textPersonName"
                     android:padding="8dp"
+                    android:textColor="@color/white"
                     android:translationY="3dp" />
 
             </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
@@ -403,10 +371,10 @@
                     android:background="@drawable/background_edittext_cadastro"
                     android:drawableLeft="@drawable/ic_email_cadastro_usuario"
                     android:drawablePadding="5dp"
-                    android:textColor="@color/white"
                     android:hint="Email"
                     android:inputType="textEmailAddress"
                     android:padding="8dp"
+                    android:textColor="@color/white"
                     android:translationY="3dp" />
 
             </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
@@ -438,9 +406,9 @@
                     android:drawableLeft="@drawable/ic_cadeado_cadastro_usuario"
                     android:drawablePadding="5dp"
                     android:hint="Senha"
-                    android:textColor="@color/white"
                     android:inputType="textPassword"
                     android:padding="8dp"
+                    android:textColor="@color/white"
                     android:translationY="3dp" />
 
             </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
@@ -468,13 +436,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_marginBottom="3dp"
-                    android:textColor="@color/white"
                     android:background="@drawable/background_edittext_cadastro"
                     android:drawableLeft="@drawable/ic_cadeado_cadastro_usuario"
                     android:drawablePadding="5dp"
                     android:hint="Confirmar Senha"
                     android:inputType="textPassword"
                     android:padding="8dp"
+                    android:textColor="@color/white"
                     android:translationY="3dp" />
 
             </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
@@ -497,12 +465,12 @@
                 android:id="@+id/tv_voltar_cadastro_usuario"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
+                android:gravity="center"
                 android:padding="10dp"
                 android:text="VOLTAR"
                 android:textColor="@color/white"

@@ -8,10 +8,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -38,15 +36,17 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
+import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
+import com.qi0.weslley.gerenciadordediscursos.helper.Mask;
 import com.qi0.weslley.gerenciadordediscursos.helper.Permissao;
 import com.qi0.weslley.gerenciadordediscursos.helper.VerificaConeccao;
+import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -58,38 +58,39 @@ import static android.app.Activity.RESULT_OK;
 public class AddEditarOradorFragment extends BaseFragment {
 
     private File localArquivoFoto = null;
-    private static final int PERMISSAO_REQUEST = 1;
-    private int CAMERA = 2;
 
-    private static final int SELECAO_CAMERA = 2;
+    // Constantes
     private static final int SELECAO_GALERIA = 1;
+    private static final int SELECAO_CAMERA = 2;
 
+    // Views
     TextView tvRatingOrador;
     EditText edtNome, edtCongregacao, edtTelefone, edtEmail;
     CircleImageView fotoCadastroOrador;
     ProgressBar progressBar;
     FrameLayout frameLayoutProgressBar;
-
-    Orador orador;
-    String idOrador;
-    String userUid;
-    String urlFotoOrador;
-
-    byte[] dadosImagem;
     RatingBar ratingBarOrador;
-    float ratingOrador = 3;
 
+    // Variaveis
+    Orador orador;
+    byte[] dadosImagem;
+    float ratingOrador = 3;
+    Congregacao congregacaoSelecionada;
+    List<Congregacao> congregacoesList = new ArrayList();
+    String idOrador, userUid, urlFotoOrador, nomeOrador, congregacaoOrador, telefoneOrador, emailOrador;
+
+    // Instancias Firebase
     FirebaseAuth firebaseAuth;
     DatabaseReference databaseReference;
     private StorageReference storageReference;
 
+    // Array de Permissôes
     private String[] permissoesNecessarias = new String[]{
             Manifest.permission.ACCESS_NETWORK_STATE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA
     };
-
 
     public AddEditarOradorFragment() {
         // Required empty public constructor
@@ -110,7 +111,9 @@ public class AddEditarOradorFragment extends BaseFragment {
         Permissao.validarPermissoes(permissoesNecessarias, getActivity(), 1);
 
         orador = (Orador) getArguments().getSerializable("oradorSelecionado");
+        mokeOradores();
 
+        // Mapeamento das Views
         edtNome = view.findViewById(R.id.edt_nome_orador_fragmente_add_orador);
         edtCongregacao = view.findViewById(R.id.edt_congregacao_fragmente_add_orador);
         edtTelefone = view.findViewById(R.id.edt_telefone_fragmente_add_orador);
@@ -122,8 +125,20 @@ public class AddEditarOradorFragment extends BaseFragment {
         tvRatingOrador = view.findViewById(R.id.tv_rating_orador);
 
         if (orador != null) {
+            congregacaoSelecionada = orador.getCongregacao();
             setValoresNoFormulario();
         }
+
+        edtTelefone.addTextChangedListener(Mask.insert("(##)#####-####", edtTelefone));
+        edtCongregacao.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    dialogSelecionarCongregação();
+                } else {
+                }
+            }
+        });
 
         ratingBarOrador.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -169,44 +184,50 @@ public class AddEditarOradorFragment extends BaseFragment {
         viewFabDetalhe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                userUid = firebaseAuth.getCurrentUser().getUid();
-                idOrador = databaseReference.child("user_data").child(userUid).child("oradores").push().getKey();
 
-                frameLayoutProgressBar.setBackgroundResource(R.color.backgroud_recycle_agenda);
-                progressBar.setVisibility(View.VISIBLE);
-                getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
-                if (orador == null) {
-                    if (dadosImagem != null) {
-                        if (VerificaConeccao.isOnline(getActivity())) {
-                            uploadFotoOrador(dadosImagem);
-                        } else {
-                            salvarOrador();
-                        }
-                    } else {
-                        salvarOrador();
-                    }
-                } else {
-                    idOrador = orador.getId();
-                    if (VerificaConeccao.isOnline(getActivity())) {
-                        deleteImageAtual(orador.getUrlFotoOrador());
-                            uploadFotoOrador(dadosImagem);
-
-                    } else {
-                        atualizarOrador();
-                    }
-
-                }
+                validarSalvarOrador();
             }
         });
 
         return view;
     }
 
+    private void dialogSelecionarCongregação() {
+
+        List<String> nomeCongregacoesList = new ArrayList<>();
+
+        for (Congregacao congregacao : congregacoesList) {
+            nomeCongregacoesList.add(congregacao.getNomeCongregacao());
+        }
+
+        final String[] nomeCongArray = nomeCongregacoesList.toArray(new String[nomeCongregacoesList.size()]);
+
+        AlertDialog.Builder alertbox = new AlertDialog.Builder(getContext());
+        alertbox.setTitle("Escolha uma Congregação")
+                .setItems(nomeCongArray, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int pos) {
+
+                        String nome = nomeCongArray[pos];
+                        edtCongregacao.setText(nome);
+                        congregacaoSelecionada = congregacoesList.get(pos);
+                    }
+                }).setPositiveButton("Add Nova Congregação", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                Intent intentAddCongregacao = new Intent(getActivity(), AdicionarEditarActivity.class);
+                intentAddCongregacao.putExtra("qualFragmentAbrir", "AddCongregacaoFragment");
+                startActivity(intentAddCongregacao);
+            }
+        });
+
+        alertbox.show();
+    }
+
     private void setValoresNoFormulario() {
+        Congregacao congregacao = orador.getCongregacao();
         edtNome.setText(orador.getNome());
-        edtCongregacao.setText("");
+        edtCongregacao.setText(congregacao.getNomeCongregacao());
         edtTelefone.setText(orador.getTelefone());
         edtEmail.setText(orador.getEmail());
         ratingBarOrador.setRating(orador.getRatingOrador());
@@ -250,61 +271,81 @@ public class AddEditarOradorFragment extends BaseFragment {
 
     }
 
-    private SimpleTarget target = new SimpleTarget<Bitmap>() {
-        @Override
-        public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
-            //fotoCadastroOrador.setImageBitmap(bitmap);
-            //Recuperar dados da imagem para o firebase
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
-            dadosImagem = baos.toByteArray();
+    private void validarSalvarOrador(){
+        userUid = firebaseAuth.getCurrentUser().getUid();
+        idOrador = databaseReference.child("user_data").child(userUid).child("oradores").push().getKey();
+
+        nomeOrador = edtNome.getText().toString();
+        congregacaoOrador = edtCongregacao.getText().toString();
+        telefoneOrador = edtTelefone.getText().toString();
+        emailOrador = edtEmail.getText().toString();
+
+        if (!nomeOrador.isEmpty()) {
+            if (!congregacaoOrador.isEmpty()) {
+
+                frameLayoutProgressBar.setBackgroundResource(R.color.backgroud_recycle_agenda);
+                progressBar.setVisibility(View.VISIBLE);
+                getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+                if (orador == null) {
+                    if (dadosImagem != null) {
+                        if (VerificaConeccao.isOnline(getActivity())) {
+                            uploadFotoOrador(dadosImagem);
+                        } else {
+                            uploadOrador();
+                        }
+                    } else {
+                        uploadOrador();
+                    }
+                } else {
+                    idOrador = orador.getId();
+                    if (dadosImagem != null) {
+                        if (VerificaConeccao.isOnline(getActivity())) {
+                            deleteImageAtual(orador.getUrlFotoOrador());
+                            uploadFotoOrador(dadosImagem);
+
+                        } else {
+                            uploadOrador();
+                            //atualizarOrador();
+                        }
+                    } else {
+                        uploadOrador();
+                        //atualizarOrador();
+                    }
+
+                }
+
+            } else {
+                Toast.makeText(getContext(), "Escolha uma Congregação", Toast.LENGTH_SHORT).show();
+                dialogSelecionarCongregação();
+            }
+        } else {
+            Toast.makeText(getContext(), "Adicione um Nome", Toast.LENGTH_SHORT).show();
         }
-    };
-    private void salvarOrador() {
+    }
+
+    private void uploadOrador() {
 
         orador = new Orador();
 
         orador.setId(idOrador);
-        orador.setNome(edtNome.getText().toString());
-        orador.setCongregacao(null);
-        orador.setTelefone(edtTelefone.getText().toString());
+        orador.setNome(nomeOrador);
+        orador.setCongregacao(congregacaoSelecionada);
+        orador.setTelefone(telefoneOrador);
         orador.setRatingOrador(ratingOrador);
-        orador.setEmail(edtEmail.getText().toString());
+        orador.setEmail(emailOrador);
         orador.setUrlFotoOrador(urlFotoOrador);
         orador.setUltimaVisita("");
 
-        uploadOrador();
-
-        progressBar.setVisibility(View.GONE);
-        getActivity().finish();
-
-    }
-
-    private void uploadOrador() {
         databaseReference.child("user_data")
                 .child(userUid)
                 .child("oradores")
                 .child(idOrador)
                 .setValue(orador);
-    }
 
-    private void atualizarOrador() {
-
-        //idOrador = orador.getId();
-
-        orador = new Orador();
-
-        orador.setId(idOrador);
-        orador.setNome(edtNome.getText().toString());
-        orador.setCongregacao(null);
-        orador.setTelefone(edtTelefone.getText().toString());
-        orador.setRatingOrador(ratingOrador);
-        orador.setEmail(edtEmail.getText().toString());
-        orador.setUrlFotoOrador(urlFotoOrador);
-        orador.setUltimaVisita("");
-
-        salvarOrador();
-
+        progressBar.setVisibility(View.GONE);
+        getActivity().finish();
     }
 
     private void deleteImageAtual(String uri) {
@@ -341,7 +382,7 @@ public class AddEditarOradorFragment extends BaseFragment {
                     case 0:
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                            startActivityForResult(takePictureIntent, CAMERA);
+                            startActivityForResult(takePictureIntent, SELECAO_CAMERA);
                         }
                         break;
                     case 1:
@@ -411,7 +452,6 @@ public class AddEditarOradorFragment extends BaseFragment {
                 .child(idOrador + ".jpeg");
 
 
-
         UploadTask uploadTask = imagemRef.putBytes(dadosImagem);
 
         uploadTask.addOnFailureListener(new OnFailureListener() {
@@ -428,13 +468,29 @@ public class AddEditarOradorFragment extends BaseFragment {
                 Uri url = taskSnapshot.getDownloadUrl();
                 urlFotoOrador = url.toString();
 
-                if (orador == null) {
-                    salvarOrador();
-                } else {
-                    atualizarOrador();
-                }
-
+                uploadOrador();
             }
         });
     }
+
+    private void mokeOradores() {
+        for (int i = 0; i <= 20; i++) {
+            Congregacao congregacao = new Congregacao();
+            congregacao.setNomeCongregacao("Nome da Congregação " + i);
+            congregacao.setCidadeCongregação("Nome da Cidade");
+            congregacao.setQuantOradores(i++);
+            congregacoesList.add(congregacao);
+        }
+    }
+
+    private SimpleTarget target = new SimpleTarget<Bitmap>() {
+        @Override
+        public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
+            //fotoCadastroOrador.setImageBitmap(bitmap);
+            //Recuperar dados da imagem para o firebase
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+            dadosImagem = baos.toByteArray();
+        }
+    };
 }
