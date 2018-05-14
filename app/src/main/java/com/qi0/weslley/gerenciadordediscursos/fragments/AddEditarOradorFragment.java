@@ -2,6 +2,7 @@ package com.qi0.weslley.gerenciadordediscursos.fragments;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,6 +15,8 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +34,10 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
@@ -41,14 +47,20 @@ import com.qi0.weslley.gerenciadordediscursos.helper.Mask;
 import com.qi0.weslley.gerenciadordediscursos.helper.Permissao;
 import com.qi0.weslley.gerenciadordediscursos.helper.VerificaConeccao;
 import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
+import com.qi0.weslley.gerenciadordediscursos.model.Discurso;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import es.dmoral.toasty.Toasty;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -70,19 +82,27 @@ public class AddEditarOradorFragment extends BaseFragment {
     ProgressBar progressBar;
     FrameLayout frameLayoutProgressBar;
     RatingBar ratingBarOrador;
+    EditText edtNomeCongregacao;
+    EditText edtCidadeCongregacao;
 
     // Variaveis
     Orador orador;
     byte[] dadosImagem;
     float ratingOrador = 3;
     Congregacao congregacaoSelecionada;
+    Congregacao congregacaoNova;
+    String idCongregacao;
+    String nomeCongregacao;
+    String cidadeCongregacao;
     List<Congregacao> congregacoesList = new ArrayList();
-    String idOrador, userUid, urlFotoOrador, nomeOrador, congregacaoOrador, telefoneOrador, emailOrador;
+    ArrayList discursos = new ArrayList();
+    String idOrador, userUID, urlFotoOrador, nomeOrador, congregacaoOrador, telefoneOrador, emailOrador;
 
     // Instancias Firebase
     FirebaseAuth firebaseAuth;
     DatabaseReference databaseReference;
     private StorageReference storageReference;
+    ValueEventListener valueEventListenerOradores;
 
     // Array de Permissôes
     private String[] permissoesNecessarias = new String[]{
@@ -103,15 +123,17 @@ public class AddEditarOradorFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_add_editar_orador, container, false);
 
         //Configurações iniciais
-        storageReference = ConfiguracaoFirebase.getFirebaseStorage();
         firebaseAuth = ConfiguracaoFirebase.getAuth();
+        storageReference = ConfiguracaoFirebase.getFirebaseStorage();
         databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
 
         //Validar permissões
         Permissao.validarPermissoes(permissoesNecessarias, getActivity(), 1);
 
         orador = (Orador) getArguments().getSerializable("oradorSelecionado");
-        mokeOradores();
+        userUID = firebaseAuth.getCurrentUser().getUid();
+        pegarCongregacoesDoBanco();
+
 
         // Mapeamento das Views
         edtNome = view.findViewById(R.id.edt_nome_orador_fragmente_add_orador);
@@ -134,7 +156,7 @@ public class AddEditarOradorFragment extends BaseFragment {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    dialogSelecionarCongregação();
+                    dialogSelecionarCongregacao();
                 } else {
                 }
             }
@@ -184,7 +206,7 @@ public class AddEditarOradorFragment extends BaseFragment {
         viewFabDetalhe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                //setDatas(); // ToDo Remover depois
                 validarSalvarOrador();
             }
         });
@@ -192,7 +214,10 @@ public class AddEditarOradorFragment extends BaseFragment {
         return view;
     }
 
-    private void dialogSelecionarCongregação() {
+    private void dialogSelecionarCongregacao() {
+
+        //userUID = firebaseAuth.getCurrentUser().getUid();
+        //pegarCongregacoesDoBanco();
 
         List<String> nomeCongregacoesList = new ArrayList<>();
 
@@ -214,10 +239,7 @@ public class AddEditarOradorFragment extends BaseFragment {
                 }).setPositiveButton("Add Nova Congregação", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
-                Intent intentAddCongregacao = new Intent(getActivity(), AdicionarEditarActivity.class);
-                intentAddCongregacao.putExtra("qualFragmentAbrir", "AddCongregacaoFragment");
-                startActivity(intentAddCongregacao);
+                dialogoAddCongregacao();
             }
         });
 
@@ -237,6 +259,7 @@ public class AddEditarOradorFragment extends BaseFragment {
             Uri uri = Uri.parse(orador.getUrlFotoOrador());
             Glide.with(getContext())
                     .load(uri)
+                    .error(R.drawable.img_padrao)
                     .into(fotoCadastroOrador);
 
         }
@@ -272,8 +295,8 @@ public class AddEditarOradorFragment extends BaseFragment {
     }
 
     private void validarSalvarOrador(){
-        userUid = firebaseAuth.getCurrentUser().getUid();
-        idOrador = databaseReference.child("user_data").child(userUid).child("oradores").push().getKey();
+        userUID = firebaseAuth.getCurrentUser().getUid();
+        idOrador = databaseReference.child("user_data").child(userUID).child("oradores").push().getKey();
 
         nomeOrador = edtNome.getText().toString();
         congregacaoOrador = edtCongregacao.getText().toString();
@@ -307,25 +330,23 @@ public class AddEditarOradorFragment extends BaseFragment {
 
                         } else {
                             uploadOrador();
-                            //atualizarOrador();
                         }
                     } else {
                         uploadOrador();
-                        //atualizarOrador();
                     }
 
                 }
 
             } else {
-                Toast.makeText(getContext(), "Escolha uma Congregação", Toast.LENGTH_SHORT).show();
-                dialogSelecionarCongregação();
+                dialogSelecionarCongregacao();
             }
         } else {
-            Toast.makeText(getContext(), "Adicione um Nome", Toast.LENGTH_SHORT).show();
+           Toasty.info(getContext(), "Adicione um Nome" , Toast.LENGTH_SHORT).show();
         }
     }
 
     private void uploadOrador() {
+        mokeDiscursos();  // ToDo Remover depois
 
         orador = new Orador();
 
@@ -333,13 +354,14 @@ public class AddEditarOradorFragment extends BaseFragment {
         orador.setNome(nomeOrador);
         orador.setCongregacao(congregacaoSelecionada);
         orador.setTelefone(telefoneOrador);
-        orador.setRatingOrador(ratingOrador);
         orador.setEmail(emailOrador);
-        orador.setUrlFotoOrador(urlFotoOrador);
         orador.setUltimaVisita("");
+        orador.setUrlFotoOrador(urlFotoOrador);
+        orador.setDiscursoListOrador(discursos);
+        orador.setRatingOrador(ratingOrador);
 
         databaseReference.child("user_data")
-                .child(userUid)
+                .child(userUID)
                 .child("oradores")
                 .child(idOrador)
                 .setValue(orador);
@@ -352,7 +374,7 @@ public class AddEditarOradorFragment extends BaseFragment {
 
         StorageReference imagemRef = storageReference
                 .child("imagens")
-                .child(userUid)
+                .child(userUID)
                 .child("orador_perfil")
                 .child(orador.getId() + ".jpeg");
 
@@ -447,7 +469,7 @@ public class AddEditarOradorFragment extends BaseFragment {
         //Salvar imagem no firebase
         StorageReference imagemRef = storageReference
                 .child("imagens")
-                .child(userUid)
+                .child(userUID)
                 .child("orador_perfil")
                 .child(idOrador + ".jpeg");
 
@@ -473,14 +495,144 @@ public class AddEditarOradorFragment extends BaseFragment {
         });
     }
 
-    private void mokeOradores() {
-        for (int i = 0; i <= 20; i++) {
-            Congregacao congregacao = new Congregacao();
-            congregacao.setNomeCongregacao("Nome da Congregação " + i);
-            congregacao.setCidadeCongregação("Nome da Cidade");
-            congregacao.setQuantOradores(i++);
-            congregacoesList.add(congregacao);
+    @SuppressLint("CutPasteId")
+    public void dialogoAddCongregacao() {
+
+        final AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogoView = inflater.inflate(R.layout.dialog_add_editar_congregacao, null);
+        dialogo.setView(dialogoView);
+        dialogo.setCancelable(false);
+        dialogo.setTitle("Adicionar Congregação");
+
+        edtNomeCongregacao = dialogoView.findViewById(R.id.edt_dialog_add_nome_congregação);
+        edtCidadeCongregacao = dialogoView.findViewById(R.id.edt_dialog_add_cidade_congregação);
+
+        dialogo.setPositiveButton("Salvar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                nomeCongregacao = edtNomeCongregacao.getText().toString().trim();
+                cidadeCongregacao = edtCidadeCongregacao.getText().toString().trim();
+                salvarCongregacao();
+                dialog.dismiss();
+
+            }
+        }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+
+        final AlertDialog alertDialog = dialogo.create();
+
+        alertDialog.show();
+
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+
+        edtCidadeCongregacao.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                if (s.length() >= 1) {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                } else {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+
+                }
+
+            }
+        });
+        edtNomeCongregacao.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                if (s.length() >= 1) {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                } else {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+
+                }
+
+            }
+        });
+    }
+
+    public void salvarCongregacao() {
+
+        idCongregacao = databaseReference.child("user_data").child(userUID).child("congregacoes").push().getKey();
+
+        if (!nomeCongregacao.isEmpty()) {
+            if (!cidadeCongregacao.isEmpty()) {
+
+                congregacaoNova = new Congregacao();
+                congregacaoNova.setIdCongregacao(idCongregacao);
+                congregacaoNova.setNomeCongregacao(nomeCongregacao);
+                congregacaoNova.setCidadeCongregação(cidadeCongregacao);
+
+                databaseReference.child("user_data")
+                        .child(userUID)
+                        .child("congregacoes")
+                        .child(idCongregacao)
+                        .setValue(congregacaoNova);
+
+                Toasty.success(getContext(), "Congregação Salva", Toast.LENGTH_SHORT).show();
+
+                edtCongregacao.setText(congregacaoNova.getNomeCongregacao());
+                congregacaoSelecionada = congregacaoNova;
+
+            } else {
+                Toasty.info(getContext(), "Preencha todos os Campos!", Toast.LENGTH_SHORT).show();
+                //Toasty.info(AdicionarEditarActivity.this, "Digite o nome da Cidade!", Toast.LENGTH_SHORT).show();
+                //dialogoAddCongregacao();
+            }
+        } else {
+            Toasty.info(getContext(), "Preencha todos os Campos!", Toast.LENGTH_SHORT).show();
+            //dialogoAddCongregacao();
         }
+    }
+
+    private void pegarCongregacoesDoBanco() {
+
+        valueEventListenerOradores = databaseReference.child("user_data").child(userUID).child("congregacoes").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                congregacoesList.clear();
+                for (DataSnapshot dados : dataSnapshot.getChildren()){
+                    Congregacao congregacao = dados.getValue(Congregacao.class);
+                    congregacoesList.add(congregacao);
+                }
+
+                //adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private SimpleTarget target = new SimpleTarget<Bitmap>() {
@@ -493,4 +645,56 @@ public class AddEditarOradorFragment extends BaseFragment {
             dadosImagem = baos.toByteArray();
         }
     };
+
+    // ToDo Remover depois
+    private void mokeDiscursos() {
+        for (int i = 0; i<= 15; i++){
+            Discurso discurso = new Discurso();
+            discurso.setNumero(String.valueOf(i));
+            discurso.setTema("Aqui ficará o tema de cada discurso" + i);
+            discurso.setUltimoProferimento("22/05/2018");
+
+            discursos.add(discurso);
+        }
+    }
+    // ToDo Remover depois
+    private void setDatas(){
+
+        for ( int i=0; i<=11; i++){
+            pegarListaDataDoDomingos(i, 2018);
+        }
+    }
+    // ToDo Remover depois
+    public void pegarListaDataDoDomingos(int mes, int ano) {
+        userUID = firebaseAuth.getCurrentUser().getUid();
+
+        // cria um calendário na data 01/mes/ano
+        Calendar c = new GregorianCalendar(ano, mes, 1);
+        // Pega a Data e formata de Acordo com a Região Ex: 00/00/00
+        //DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
+        DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
+
+        do {
+            // o dia da semana ecolhido é domingo?
+            if (c.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+                SimpleDateFormat dataSDF = new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat mesSDF = new SimpleDateFormat("MM");
+                String dataFormatada = dataSDF.format(c.getTime());
+                String mesFormatado = mesSDF.format(c.getTime());
+
+                databaseReference.child("user_data")
+                        .child(userUID)
+                        .child("Agenda")
+                        .child(String.valueOf(ano))
+                        .child(mesFormatado)
+                        .child(dataFormatada)
+                        .setValue("Dados da Agenda Aqui!");
+
+            }
+            // incrementa um dia no calendário
+            c.roll(Calendar.DAY_OF_MONTH, true);
+
+            // enquanto o dia do mês atual for diferente de 1
+        } while (c.get(Calendar.DAY_OF_MONTH) != 1);
+    }
 }
