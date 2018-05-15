@@ -1,9 +1,11 @@
 package com.qi0.weslley.gerenciadordediscursos.model;
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 import java.util.List;
 
-public class Orador implements Serializable{
+public class Orador implements Serializable, Comparable<Orador>{
 
     private String id;
     private String nome;
@@ -100,5 +102,10 @@ public class Orador implements Serializable{
 
     public void setRatingOrador(float ratingOrador) {
         this.ratingOrador = ratingOrador;
+    }
+
+    @Override
+    public int compareTo(@NonNull Orador o) {
+        return this.getNome().compareTo(o.getNome());
     }
 }

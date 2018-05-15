@@ -20,6 +20,8 @@ import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.model.Usuario;
 
+import es.dmoral.toasty.Toasty;
+
 public class LoginActivity extends AppCompatActivity {
 
     FirebaseAuth firebaseAuth;
@@ -73,10 +75,10 @@ public class LoginActivity extends AppCompatActivity {
             if(!txtSenha.isEmpty()){
                 logarUsuario();
             }else {
-                Toast.makeText(this, "Prencha o Campo Senha!", Toast.LENGTH_SHORT).show();
+                Toasty.info(LoginActivity.this, "Prencha o Campo Senha!", Toast.LENGTH_SHORT, true).show();
             }
         }else {
-            Toast.makeText(this, "Digite um Email!", Toast.LENGTH_SHORT).show();
+            Toasty.info(LoginActivity.this, "Digite um Email!", Toast.LENGTH_SHORT, true).show();
         }
     }
 
@@ -101,10 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                         excecao = "Erro ao cadastrar usuário: "  + e.getMessage();
                         e.printStackTrace();
                     }
-
-                    Toast.makeText(LoginActivity.this,
-                            excecao,
-                            Toast.LENGTH_SHORT).show();
+                    Toasty.info(LoginActivity.this, excecao, Toast.LENGTH_SHORT, true).show();
                 }
             }
         });

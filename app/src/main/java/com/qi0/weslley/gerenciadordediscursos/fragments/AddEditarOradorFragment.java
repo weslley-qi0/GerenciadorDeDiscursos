@@ -346,7 +346,6 @@ public class AddEditarOradorFragment extends BaseFragment {
     }
 
     private void uploadOrador() {
-        mokeDiscursos();  // ToDo Remover depois
 
         orador = new Orador();
 
@@ -646,17 +645,6 @@ public class AddEditarOradorFragment extends BaseFragment {
         }
     };
 
-    // ToDo Remover depois
-    private void mokeDiscursos() {
-        for (int i = 0; i<= 15; i++){
-            Discurso discurso = new Discurso();
-            discurso.setNumero(String.valueOf(i));
-            discurso.setTema("Aqui ficará o tema de cada discurso" + i);
-            discurso.setUltimoProferimento("22/05/2018");
-
-            discursos.add(discurso);
-        }
-    }
     // ToDo Remover depois
     private void setDatas(){
 

@@ -16,12 +16,21 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
+import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
 import com.qi0.weslley.gerenciadordediscursos.adapter.DiscursoAdapter;
 import com.qi0.weslley.gerenciadordediscursos.helper.RecyclerItemClickListener;
+import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
 import com.qi0.weslley.gerenciadordediscursos.model.Discurso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,8 +39,14 @@ public class DiscursosFragment extends BaseFragment {
 
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
+    DiscursoAdapter adapter;
 
-    ArrayList discursos = new ArrayList();
+    ArrayList<Discurso> discursosList = new ArrayList();
+
+    DatabaseReference databaseReference;
+    FirebaseAuth firebaseAuth;
+    ValueEventListener valueEventListenerDiscursos;
+    String userUID;
 
     public DiscursosFragment() {
         // Required empty public constructor
@@ -44,9 +59,12 @@ public class DiscursosFragment extends BaseFragment {
 
         View view = inflater.inflate(R.layout.fragment_discursos, container, false);
 
-        setHasOptionsMenu(true);
+        databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
+        firebaseAuth = ConfiguracaoFirebase.getAuth();
 
-        mokeDiscursos();
+        userUID = firebaseAuth.getCurrentUser().getUid();
+
+        setHasOptionsMenu(true);
 
         recyclerView = view.findViewById(R.id.recycle_view_discursos);
         layoutManager = new LinearLayoutManager(getActivity());
@@ -54,7 +72,7 @@ public class DiscursosFragment extends BaseFragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
 
-        DiscursoAdapter adapter = new DiscursoAdapter(discursos, getContext());
+        adapter = new DiscursoAdapter(discursosList, getContext());
 
         recyclerView.setAdapter(adapter);
 
@@ -86,7 +104,11 @@ public class DiscursosFragment extends BaseFragment {
 
             @Override
             public void onLongItemClick(View view, int position) {
-
+                Discurso discursoSelecionado = (Discurso) discursosList.get(position);
+                Intent intentEdtarDiscurso = new Intent(getActivity(), AdicionarEditarActivity.class);
+                intentEdtarDiscurso.putExtra("qualFragmentAbrir", "AddDiscursosFragment");
+                intentEdtarDiscurso.putExtra("discursoSelecionado", discursoSelecionado);
+                startActivity(intentEdtarDiscurso);
             }
 
             @Override
@@ -97,15 +119,16 @@ public class DiscursosFragment extends BaseFragment {
         return view;
     }
 
-    private void mokeDiscursos() {
-        for (int i = 0; i<= 150; i++){
-            Discurso discurso = new Discurso();
-            discurso.setNumero(String.valueOf(i));
-            discurso.setTema("Aqui ficará o tema de cada discurso");
-            discurso.setUltimoProferimento("22/05/2018");
+    @Override
+    public void onStart() {
+        super.onStart();
+        pegarDiscursosDoBanco();
+    }
 
-            discursos.add(discurso);
-        }
+    @Override
+    public void onStop() {
+        super.onStop();
+        databaseReference.removeEventListener(valueEventListenerDiscursos);
     }
 
     private void runLayoutAnimation(final RecyclerView recyclerView) {
@@ -116,6 +139,28 @@ public class DiscursosFragment extends BaseFragment {
         recyclerView.setLayoutAnimation(controller);
         recyclerView.getAdapter().notifyDataSetChanged();
         recyclerView.scheduleLayoutAnimation();
+    }
+
+    private void pegarDiscursosDoBanco() {
+
+        valueEventListenerDiscursos = databaseReference.child("user_data").child(userUID).child("discursos").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                discursosList.clear();
+                for (DataSnapshot dados : dataSnapshot.getChildren()){
+                    Discurso discurso = dados.getValue(Discurso.class);
+                    discursosList.add(discurso);
+                    Collections.sort(discursosList);
+                }
+
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 }

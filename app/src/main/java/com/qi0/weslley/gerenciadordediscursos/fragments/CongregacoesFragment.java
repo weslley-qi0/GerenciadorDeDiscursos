@@ -15,12 +15,21 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
+import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
 import com.qi0.weslley.gerenciadordediscursos.adapter.CongregacaoAdapter;
 import com.qi0.weslley.gerenciadordediscursos.helper.RecyclerItemClickListener;
 import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,8 +38,13 @@ public class CongregacoesFragment extends BaseFragment {
 
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
-
+    CongregacaoAdapter adapter;
     ArrayList congregacoesList = new ArrayList();
+
+    DatabaseReference databaseReference;
+    FirebaseAuth firebaseAuth;
+    ValueEventListener valueEventListenerCongregacao;
+    String userUID;
 
 
     public CongregacoesFragment() {
@@ -44,9 +58,12 @@ public class CongregacoesFragment extends BaseFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_congregacoes, container, false);
 
-        setHasOptionsMenu(true);
+        databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
+        firebaseAuth = ConfiguracaoFirebase.getAuth();
 
-        mokeOradores();
+        userUID = firebaseAuth.getCurrentUser().getUid();
+
+        setHasOptionsMenu(true);
 
         recyclerView = view.findViewById(R.id.recycle_view_congregaçoes);
         layoutManager = new LinearLayoutManager(getActivity());
@@ -54,7 +71,7 @@ public class CongregacoesFragment extends BaseFragment {
         //recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
 
-        CongregacaoAdapter adapter = new CongregacaoAdapter(congregacoesList, getContext());
+        adapter = new CongregacaoAdapter(congregacoesList, getContext());
 
         recyclerView.setAdapter(adapter);
 
@@ -87,7 +104,11 @@ public class CongregacoesFragment extends BaseFragment {
 
             @Override
             public void onLongItemClick(View view, int position) {
-
+                Congregacao congregacaoSelecionada = (Congregacao) congregacoesList.get(position);
+                Intent intentEditarCongregacao = new Intent(getActivity(), AdicionarEditarActivity.class);
+                intentEditarCongregacao.putExtra("qualFragmentAbrir", "AddCongregacaoFragment");
+                intentEditarCongregacao.putExtra("congregacaoelecionada", congregacaoSelecionada);
+                startActivity(intentEditarCongregacao);
             }
 
             @Override
@@ -98,14 +119,17 @@ public class CongregacoesFragment extends BaseFragment {
         return view;
     }
 
-    private void mokeOradores() {
-        for (int i = 0; i <= 50; i++) {
-            Congregacao congregacao = new Congregacao();
-            congregacao.setNomeCongregacao("Nome da Congregação " + i);
-            congregacao.setCidadeCongregação("Nome da Cidade");
-            congregacao.setQuantOradores(i++);
-            congregacoesList.add(congregacao);
-        }
+    @Override
+    public void onStart() {
+        super.onStart();
+        pegarCongregacoesDoBanco();
+        pegarQuantidadeOradores();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        databaseReference.removeEventListener(valueEventListenerCongregacao);
     }
 
     private void runLayoutAnimation(final RecyclerView recyclerView) {
@@ -116,5 +140,58 @@ public class CongregacoesFragment extends BaseFragment {
         recyclerView.setLayoutAnimation(controller);
         recyclerView.getAdapter().notifyDataSetChanged();
         recyclerView.scheduleLayoutAnimation();
+    }
+
+    private void pegarCongregacoesDoBanco() {
+
+        valueEventListenerCongregacao = databaseReference.child("user_data").child(userUID).child("congregacoes").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                congregacoesList.clear();
+                for (DataSnapshot dados : dataSnapshot.getChildren()){
+                    Congregacao congregacao = dados.getValue(Congregacao.class);
+                    congregacoesList.add(congregacao);
+                    Collections.sort(congregacoesList);
+                }
+
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void pegarQuantidadeOradores(){
+
+        DatabaseReference quantOradorRef = databaseReference.child("user_data").child(userUID).child("oradores");
+        quantOradorRef.orderByChild("congregacoes").equalTo("Cong_00").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                long oradorQuant = dataSnapshot.getChildrenCount();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

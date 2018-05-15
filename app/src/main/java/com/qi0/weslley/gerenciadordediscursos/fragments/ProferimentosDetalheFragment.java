@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.adapter.DiscursoAdapter;
 import com.qi0.weslley.gerenciadordediscursos.model.Discurso;
+import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 
 import java.util.ArrayList;
 
@@ -24,13 +25,12 @@ public class ProferimentosDetalheFragment extends BaseFragment {
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
 
-    ArrayList discursos = new ArrayList();
+    ArrayList<Discurso> discursos = new ArrayList();
 
 
     public ProferimentosDetalheFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,7 +38,11 @@ public class ProferimentosDetalheFragment extends BaseFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_proferimentos_detalhe, container, false);
 
-        mokeDiscursos();
+        Orador oradorSelecionado = (Orador) getArguments().getSerializable("oradorSelecionado");
+
+        if (oradorSelecionado != null){
+            discursos.addAll(oradorSelecionado.getDiscursoListOrador());
+        }
 
         recyclerView = view.findViewById(R.id.recycle_view_proferimentos_orador_detalhe);
         layoutManager = new LinearLayoutManager(getActivity());
@@ -51,16 +55,5 @@ public class ProferimentosDetalheFragment extends BaseFragment {
         recyclerView.setAdapter(adapter);
 
         return view;
-    }
-
-    private void mokeDiscursos() {
-        for (int i = 0; i<= 9; i++){
-            Discurso discurso = new Discurso();
-            discurso.setNumero(String.valueOf(i));
-            discurso.setTema("Aqui ficará o tema de cada discurso");
-            discurso.setUltimoProferimento("22/05/2018");
-
-            discursos.add(discurso);
-        }
     }
 }

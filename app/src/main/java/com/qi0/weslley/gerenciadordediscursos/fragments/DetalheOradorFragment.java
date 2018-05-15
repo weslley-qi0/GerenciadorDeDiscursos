@@ -120,7 +120,7 @@ public class DetalheOradorFragment extends BaseFragment {
         FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
                 getChildFragmentManager(), FragmentPagerItems.with(getContext())
                 .add("INFO", InfoOradorFragment.class, new Bundler().putSerializable("oradorSelecionado", oradorSelecionado).get())
-                .add("PROFERIMENTOS", ProferimentosDetalheFragment.class)
+                .add("PROFERIMENTOS", ProferimentosDetalheFragment.class, new Bundler().putSerializable("oradorSelecionado", oradorSelecionado).get())
                 .create());
 
         viewPager.setAdapter(adapter);

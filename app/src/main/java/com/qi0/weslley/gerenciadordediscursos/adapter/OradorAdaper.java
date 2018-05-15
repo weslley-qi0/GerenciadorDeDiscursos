@@ -49,8 +49,8 @@ public class OradorAdaper extends RecyclerView.Adapter<OradorAdaper.MyViewHolder
             Uri uri = Uri.parse( orador.getUrlFotoOrador() );
             Glide.with( context )
                     .load( uri )
+                    .error( R.drawable.img_padrao )
                     .into( holder.fotoOrador );
-
         }else {
             holder.fotoOrador.setImageResource( R.drawable.img_padrao );
         }

@@ -22,6 +22,8 @@ import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.model.Usuario;
 
+import es.dmoral.toasty.Toasty;
+
 public class CadastroUsuarioActivity extends AppCompatActivity {
 
     FirebaseAuth firebaseAuth;
@@ -85,22 +87,22 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
                                 if (txtConfirmarSenhaCadastro.equals(txtSenhaCadastro)){
                                     cadastrarUsuario();
                                 }else {
-                                    Toast.makeText(this, "As senhas não corespondem!", Toast.LENGTH_SHORT).show();
+                                    Toasty.info(CadastroUsuarioActivity.this, "As senhas não corespondem!", Toast.LENGTH_SHORT, true).show();
                                 }
                             }else {
-                                Toast.makeText(this, "Confirme a senha", Toast.LENGTH_SHORT).show();
+                                Toasty.info(CadastroUsuarioActivity.this, "Confirme a senha", Toast.LENGTH_SHORT, true).show();
                             }
                         }else {
-                            Toast.makeText(this, "Preencha o campo Senha", Toast.LENGTH_SHORT).show();
+                            Toasty.info(CadastroUsuarioActivity.this, "Preencha o campo Senha", Toast.LENGTH_SHORT, true).show();
                         }
                     }else {
-                        Toast.makeText(this, "Preencha o campo Email", Toast.LENGTH_SHORT).show();
+                        Toasty.info(CadastroUsuarioActivity.this, "Preencha o campo Email", Toast.LENGTH_SHORT, true).show();
                     }
                 }else {
-                    Toast.makeText(this, "Preencha o campo Congregação", Toast.LENGTH_SHORT).show();
+                    Toasty.info(CadastroUsuarioActivity.this, "Preencha o campo Congregação", Toast.LENGTH_SHORT, true).show();
                 }
             }else {
-                Toast.makeText(this, "Preencha o campo Nome", Toast.LENGTH_SHORT).show();
+                Toasty.info(CadastroUsuarioActivity.this, "Preencha o campo Nome", Toast.LENGTH_SHORT, true).show();
             }
     }
 
@@ -134,10 +136,7 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
                         excecao = "Erro ao cadastrar usuário: "  + e.getMessage();
                         e.printStackTrace();
                     }
-
-                    Toast.makeText(CadastroUsuarioActivity.this,
-                            excecao,
-                            Toast.LENGTH_SHORT).show();
+                    Toasty.info(CadastroUsuarioActivity.this, excecao, Toast.LENGTH_SHORT, true).show();
                 }
             }
         });

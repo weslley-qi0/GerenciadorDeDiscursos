@@ -1,9 +1,12 @@
 package com.qi0.weslley.gerenciadordediscursos.model;
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 
-public class Congregacao implements Serializable {
+public class Congregacao implements Serializable, Comparable<Congregacao> {
 
+    private String idCongregacao;
     private String nomeCongregacao;
     private String cidadeCongregação;
     private int quantOradores;
@@ -12,10 +15,19 @@ public class Congregacao implements Serializable {
     public Congregacao() {
     }
 
-    public Congregacao(String nomeCongregacao, String cidadeCongregação, int quantOradores) {
+    public Congregacao(String idCongregacao, String nomeCongregacao, String cidadeCongregação, int quantOradores) {
+        this.idCongregacao = idCongregacao;
         this.nomeCongregacao = nomeCongregacao;
         this.cidadeCongregação = cidadeCongregação;
         this.quantOradores = quantOradores;
+    }
+
+    public String getIdCongregacao() {
+        return idCongregacao;
+    }
+
+    public void setIdCongregacao(String idCongregacao) {
+        this.idCongregacao = idCongregacao;
     }
 
     public String getNomeCongregacao() {
@@ -43,7 +55,7 @@ public class Congregacao implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return nomeCongregacao;
+    public int compareTo(@NonNull Congregacao o) {
+        return this.getNomeCongregacao().compareTo(o.getNomeCongregacao());
     }
 }

@@ -38,7 +38,6 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        //TODO
         Date data = datasList.get(position);
         Calendar cal = Calendar.getInstance();
 

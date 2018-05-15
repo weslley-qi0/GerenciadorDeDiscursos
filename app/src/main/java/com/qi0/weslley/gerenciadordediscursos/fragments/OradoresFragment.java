@@ -28,6 +28,7 @@ import com.qi0.weslley.gerenciadordediscursos.helper.RecyclerItemClickListener;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -144,6 +145,7 @@ public class OradoresFragment extends BaseFragment {
                 for (DataSnapshot dados : dataSnapshot.getChildren()){
                     Orador orador = dados.getValue(Orador.class);
                     oradoresList.add(orador);
+                    Collections.sort(oradoresList);
                 }
 
                 adapter.notifyDataSetChanged();
