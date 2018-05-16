@@ -3,9 +3,12 @@ package com.qi0.weslley.gerenciadordediscursos.fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,16 +45,18 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
-import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
 import com.qi0.weslley.gerenciadordediscursos.helper.Mask;
 import com.qi0.weslley.gerenciadordediscursos.helper.Permissao;
 import com.qi0.weslley.gerenciadordediscursos.helper.VerificaConeccao;
 import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
-import com.qi0.weslley.gerenciadordediscursos.model.Discurso;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -254,7 +259,22 @@ public class AddEditarOradorFragment extends BaseFragment {
         edtEmail.setText(orador.getEmail());
         ratingBarOrador.setRating(orador.getRatingOrador());
 
-        if (orador.getUrlFotoOrador() != null) {
+        if (VerificaConeccao.isOnline(getActivity())) {
+            if (orador.getUrlFotoOrador() != null) {
+                pegarFoto();
+                Uri uri = Uri.parse(orador.getUrlFotoOrador());
+                Glide.with(getContext())
+                        .load(uri)
+                        .error(R.drawable.img_padrao)
+                        .into(fotoCadastroOrador);
+            }
+        } else {
+            Glide.with(getContext())
+                    .load(R.drawable.img_padrao)
+                    .into(fotoCadastroOrador);
+        }
+
+        /*if (orador.getUrlFotoOrador() != null) {
             pegarFoto();
             Uri uri = Uri.parse(orador.getUrlFotoOrador());
             Glide.with(getContext())
@@ -262,7 +282,9 @@ public class AddEditarOradorFragment extends BaseFragment {
                     .error(R.drawable.img_padrao)
                     .into(fotoCadastroOrador);
 
-        }
+        }else {
+            pegarFotoSalvaInternamente(orador.getCaminhoInternoFoto()); //Todo Remover Depois
+        }*/
 
         switch ((int) orador.getRatingOrador()) {
             case 1:
@@ -294,7 +316,8 @@ public class AddEditarOradorFragment extends BaseFragment {
 
     }
 
-    private void validarSalvarOrador(){
+    private void validarSalvarOrador() {
+
         userUID = firebaseAuth.getCurrentUser().getUid();
         idOrador = databaseReference.child("user_data").child(userUID).child("oradores").push().getKey();
 
@@ -313,6 +336,7 @@ public class AddEditarOradorFragment extends BaseFragment {
 
                 if (orador == null) {
                     if (dadosImagem != null) {
+
                         if (VerificaConeccao.isOnline(getActivity())) {
                             uploadFotoOrador(dadosImagem);
                         } else {
@@ -322,9 +346,12 @@ public class AddEditarOradorFragment extends BaseFragment {
                         uploadOrador();
                     }
                 } else {
+
                     idOrador = orador.getId();
+
                     if (dadosImagem != null) {
                         if (VerificaConeccao.isOnline(getActivity())) {
+
                             deleteImageAtual(orador.getUrlFotoOrador());
                             uploadFotoOrador(dadosImagem);
 
@@ -341,7 +368,7 @@ public class AddEditarOradorFragment extends BaseFragment {
                 dialogSelecionarCongregacao();
             }
         } else {
-           Toasty.info(getContext(), "Adicione um Nome" , Toast.LENGTH_SHORT).show();
+            Toasty.info(getContext(), "Adicione um Nome", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -619,7 +646,7 @@ public class AddEditarOradorFragment extends BaseFragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 congregacoesList.clear();
-                for (DataSnapshot dados : dataSnapshot.getChildren()){
+                for (DataSnapshot dados : dataSnapshot.getChildren()) {
                     Congregacao congregacao = dados.getValue(Congregacao.class);
                     congregacoesList.add(congregacao);
                 }
@@ -646,12 +673,13 @@ public class AddEditarOradorFragment extends BaseFragment {
     };
 
     // ToDo Remover depois
-    private void setDatas(){
+    private void setDatas() {
 
-        for ( int i=0; i<=11; i++){
+        for (int i = 0; i <= 11; i++) {
             pegarListaDataDoDomingos(i, 2018);
         }
     }
+
     // ToDo Remover depois
     public void pegarListaDataDoDomingos(int mes, int ano) {
         userUID = firebaseAuth.getCurrentUser().getUid();

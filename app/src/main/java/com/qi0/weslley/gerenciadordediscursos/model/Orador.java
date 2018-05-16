@@ -13,6 +13,7 @@ public class Orador implements Serializable, Comparable<Orador>{
     private String telefone;
     private String email;
     private String ultimaVisita;
+    private String caminhoInternoFoto;
     private String urlFotoOrador;
     private List<Discurso> discursoListOrador;
     private float ratingOrador;
@@ -20,7 +21,7 @@ public class Orador implements Serializable, Comparable<Orador>{
     public Orador() {
     }
 
-    public Orador(String id, String nome, Congregacao congregacao, String telefone, String email, String ultimaVisita, String urlFotoOrador, List<Discurso> discursoListOrador, float ratingOrador) {
+    public Orador(String id, String nome, Congregacao congregacao, String telefone, String email, String ultimaVisita, String caminhoInternoFoto, String urlFotoOrador, List<Discurso> discursoListOrador, float ratingOrador) {
         this.id = id;
         this.nome = nome;
         this.congregacao = congregacao;

@@ -8,7 +8,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -22,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
+import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
 import com.qi0.weslley.gerenciadordediscursos.activitys.DetalheActivity;
 import com.qi0.weslley.gerenciadordediscursos.adapter.OradorAdaper;
 import com.qi0.weslley.gerenciadordediscursos.helper.RecyclerItemClickListener;
@@ -39,6 +42,7 @@ public class OradoresFragment extends BaseFragment {
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
     OradorAdaper adapter;
+    Orador oradorSelecionado;
 
     ArrayList oradoresList = new ArrayList();
 
@@ -100,16 +104,17 @@ public class OradoresFragment extends BaseFragment {
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Orador orador = (Orador) oradoresList.get(position);
+                oradorSelecionado = (Orador) oradoresList.get(position);
                 Intent intentOradorDealhes = new Intent(getActivity(), DetalheActivity.class);
                 intentOradorDealhes.putExtra("qualFragmentAbrir", "DetalheOradorFragment");
-                intentOradorDealhes.putExtra("orador", orador);
+                intentOradorDealhes.putExtra("orador", oradorSelecionado);
                 startActivity(intentOradorDealhes);
             }
 
             @Override
             public void onLongItemClick(View view, int position) {
-
+                oradorSelecionado = (Orador) oradoresList.get(position);
+                registerForContextMenu(view);
             }
 
             @Override
@@ -159,4 +164,31 @@ public class OradoresFragment extends BaseFragment {
         });
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getActivity().getMenuInflater().inflate(R.menu.menu_recycle_view,menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(
+            MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_editar:
+
+                Intent intentEditarOrador = new Intent(getActivity(), AdicionarEditarActivity.class);
+                intentEditarOrador.putExtra("qualFragmentAbrir", "AddOradorFragment");
+                intentEditarOrador.putExtra("oradorSelecionado", oradorSelecionado);
+                startActivity(intentEditarOrador);
+
+                return true;
+            case R.id.item_deletar:
+
+                databaseReference.child("user_data").child(userUID).child("oradores").child(oradorSelecionado.getId()).removeValue();
+
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
 }

@@ -8,7 +8,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -39,6 +42,7 @@ public class CongregacoesFragment extends BaseFragment {
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
     CongregacaoAdapter adapter;
+    Congregacao congregacaoSelecionada;
     ArrayList congregacoesList = new ArrayList();
 
     DatabaseReference databaseReference;
@@ -104,17 +108,16 @@ public class CongregacoesFragment extends BaseFragment {
 
             @Override
             public void onLongItemClick(View view, int position) {
-                Congregacao congregacaoSelecionada = (Congregacao) congregacoesList.get(position);
-                Intent intentEditarCongregacao = new Intent(getActivity(), AdicionarEditarActivity.class);
-                intentEditarCongregacao.putExtra("qualFragmentAbrir", "AddCongregacaoFragment");
-                intentEditarCongregacao.putExtra("congregacaoelecionada", congregacaoSelecionada);
-                startActivity(intentEditarCongregacao);
+                congregacaoSelecionada = (Congregacao) congregacoesList.get(position);
+                registerForContextMenu(view);
             }
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             }
         }));
+
+
 
         return view;
     }
@@ -193,5 +196,33 @@ public class CongregacoesFragment extends BaseFragment {
 
             }
         });
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getActivity().getMenuInflater().inflate(R.menu.menu_recycle_view,menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(
+            MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_editar:
+
+                Intent intentEditarCongregacao = new Intent(getActivity(), AdicionarEditarActivity.class);
+                intentEditarCongregacao.putExtra("qualFragmentAbrir", "AddCongregacaoFragment");
+                intentEditarCongregacao.putExtra("congregacaoelecionada", congregacaoSelecionada);
+                startActivity(intentEditarCongregacao);
+
+                return true;
+            case R.id.item_deletar:
+
+                databaseReference.child("user_data").child(userUID).child("congregacoes").child(congregacaoSelecionada.getIdCongregacao()).removeValue();
+
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 }

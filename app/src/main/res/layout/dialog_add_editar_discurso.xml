@@ -48,7 +48,7 @@
                     app:hintTextAppearance="@style/myHintTextAppearance">
 
                     <android.support.design.widget.TextInputEditText
-                        android:id="@+id/eedt_dialog_add_tema_discurso"
+                        android:id="@+id/edt_dialog_add_tema_discurso"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
                         android:layout_marginBottom="3dp"

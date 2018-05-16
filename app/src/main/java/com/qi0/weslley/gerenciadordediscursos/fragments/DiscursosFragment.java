@@ -9,7 +9,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -40,6 +42,7 @@ public class DiscursosFragment extends BaseFragment {
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
     DiscursoAdapter adapter;
+    Discurso discursoSelecionado;
 
     ArrayList<Discurso> discursosList = new ArrayList();
 
@@ -104,11 +107,9 @@ public class DiscursosFragment extends BaseFragment {
 
             @Override
             public void onLongItemClick(View view, int position) {
-                Discurso discursoSelecionado = (Discurso) discursosList.get(position);
-                Intent intentEdtarDiscurso = new Intent(getActivity(), AdicionarEditarActivity.class);
-                intentEdtarDiscurso.putExtra("qualFragmentAbrir", "AddDiscursosFragment");
-                intentEdtarDiscurso.putExtra("discursoSelecionado", discursoSelecionado);
-                startActivity(intentEdtarDiscurso);
+                discursoSelecionado = (Discurso) discursosList.get(position);
+                registerForContextMenu(view);
+
             }
 
             @Override
@@ -161,6 +162,34 @@ public class DiscursosFragment extends BaseFragment {
 
             }
         });
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getActivity().getMenuInflater().inflate(R.menu.menu_recycle_view,menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(
+            MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_editar:
+
+                Intent intentEdtarDiscurso = new Intent(getActivity(), AdicionarEditarActivity.class);
+                intentEdtarDiscurso.putExtra("qualFragmentAbrir", "AddDiscursosFragment");
+                intentEdtarDiscurso.putExtra("discursoSelecionado", discursoSelecionado);
+                startActivity(intentEdtarDiscurso);
+
+                return true;
+            case R.id.item_deletar:
+
+                databaseReference.child("user_data").child(userUID).child("discursos").child(discursoSelecionado.getIdDiscurso()).removeValue();
+
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
 }

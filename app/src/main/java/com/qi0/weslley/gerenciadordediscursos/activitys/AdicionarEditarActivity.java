@@ -21,7 +21,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.fragments.AddEditarOradorFragment;
-import com.qi0.weslley.gerenciadordediscursos.helper.Mask;
 import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
 import com.qi0.weslley.gerenciadordediscursos.model.Discurso;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
@@ -285,7 +284,7 @@ public class AdicionarEditarActivity extends BaseActivity {
         getSupportActionBar().setTitle("");
 
         edtNumeroDiscurso = dialogoView.findViewById(R.id.edt_dialog_add_numero_discurso);
-        edtTemaDiscurso = dialogoView.findViewById(R.id.eedt_dialog_add_tema_discurso);
+        edtTemaDiscurso = dialogoView.findViewById(R.id.edt_dialog_add_tema_discurso);
 
 
         if (discursoSelecionado != null) {

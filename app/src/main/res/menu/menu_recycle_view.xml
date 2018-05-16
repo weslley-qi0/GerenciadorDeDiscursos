@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/item_editar"
+        android:icon="@drawable/ic_nav_view_agenda"
+        android:title="Editar" />
+
+    <item
+        android:id="@+id/item_deletar"
+        android:icon="@drawable/ic_nav_view_settings"
+        android:title="Deletar" />
+
+</menu>
+

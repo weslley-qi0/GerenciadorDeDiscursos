@@ -41,7 +41,8 @@ public class ProferimentosDetalheFragment extends BaseFragment {
         Orador oradorSelecionado = (Orador) getArguments().getSerializable("oradorSelecionado");
 
         if (oradorSelecionado != null){
-            discursos.addAll(oradorSelecionado.getDiscursoListOrador());
+            //ToDo peger discursos feitos pelo orador selecionado e add a list
+            //discursos.addAll(oradorSelecionado.getDiscursoListOrador());
         }
 
         recyclerView = view.findViewById(R.id.recycle_view_proferimentos_orador_detalhe);
