@@ -1,262 +1,285 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_cadastro_gradiente"
-    tools:context=".activitys.CadastroUsuarioActivity">
+    tools:context=".activitys.LoginActivity"
+    tools:layout_editor_absoluteY="25dp">
 
-    <!--<android.support.constraint.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="20dp">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/img_orador_detalhe_fragment"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_gravity="center"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:src="@drawable/img_padrao"
-            app:civ_border_color="@color/white"
-            app:civ_border_width="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_camera_fragment_novo_orador"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            app:backgroundTint="@color/colorPrimary"
-            app:elevation="0dp"
-            app:fabSize="mini"
-            app:layout_constraintBottom_toBottomOf="@+id/img_orador_detalhe_fragment"
-            app:layout_constraintEnd_toEndOf="@+id/img_orador_detalhe_fragment"
-            app:srcCompat="@drawable/ic_camera"
-            tools:ignore="VectorDrawableCompat" />
-
-        <LinearLayout
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/img_orador_detalhe_fragment">
+            android:layout_height="match_parent">
 
-            <com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout
-                android:id="@+id/customTextInputLayout2"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:clipChildren="false"
-                android:textColorHint="@color/white"
-                app:hintTextAppearance="@style/myHintTextAppearance"
-                app:layout_constraintBottom_toTopOf="@+id/customTextInputLayout"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="packed">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/edt_nome_usuario_cadastro"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:layout_marginBottom="3dp"
-                    android:background="@drawable/background_edittext_cadastro"
-                    android:hint="Nome"
-                    android:textColor="@color/white"
-                    android:inputType="textCapWords|textPersonName"
-                    android:padding="8dp"
-                    android:translationY="3dp" />
-
-            </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
-
-
-
-            <com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout
-                android:id="@+id/customTextInputLayout3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="2dp"
-                android:clipChildren="false"
-                android:textColorHint="@color/white"
-                app:hintTextAppearance="@style/myHintTextAppearance"
-                app:layout_constraintBottom_toTopOf="@+id/customTextInputLayout4"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/customTextInputLayout">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/edt_nome_congregacao_usuario_cadastro"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:layout_marginBottom="3dp"
-                    android:background="@drawable/background_edittext_cadastro"
-                    android:textColor="@color/white"
-                    android:hint="Congregação"
-                    android:inputType="textCapWords|textPersonName"
-                    android:padding="8dp"
-                    android:translationY="3dp" />
-
-            </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
-
-            <com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout
-                android:id="@+id/customTextInputLayout4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="2dp"
-                android:clipChildren="false"
-                android:textColorHint="@color/white"
-                app:hintTextAppearance="@style/myHintTextAppearance"
-                app:layout_constraintBottom_toTopOf="@+id/customTextInputLayout5"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/customTextInputLayout3">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/edt_email_usuario_cadastro"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:layout_marginBottom="3dp"
-                    android:background="@drawable/background_edittext_cadastro"
-                    android:textColor="@color/white"
-                    android:hint="Email"
-                    android:inputType="textEmailAddress"
-                    android:padding="8dp"
-                    android:translationY="3dp" />
-
-            </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
-
-            <com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout
-                android:id="@+id/customTextInputLayout5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="2dp"
-                android:clipChildren="false"
-                android:textColorHint="@color/white"
-                app:hintTextAppearance="@style/myHintTextAppearance"
-                app:layout_constraintBottom_toTopOf="@+id/customTextInputLayout6"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/customTextInputLayout4">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/edt_senha_usuario_cadastro"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:layout_marginBottom="3dp"
-                    android:background="@drawable/background_edittext_cadastro"
-                    android:hint="Senha"
-                    android:textColor="@color/white"
-                    android:inputType="textPassword"
-                    android:padding="8dp"
-                    android:translationY="3dp" />
-
-            </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
-
-            <com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout
-                android:id="@+id/customTextInputLayout6"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="2dp"
-                android:clipChildren="false"
-                android:textColorHint="@color/white"
-                app:hintTextAppearance="@style/myHintTextAppearance"
-                app:layout_constraintBottom_toTopOf="@+id/bt_cadastra_usuario"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/customTextInputLayout5">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/edt_confirm_senha_usuario_cadastro"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:layout_marginBottom="3dp"
-                    android:textColor="@color/white"
-                    android:background="@drawable/background_edittext_cadastro"
-                    android:hint="Confirmar Senha"
-                    android:inputType="textPassword"
-                    android:padding="8dp"
-                    android:translationY="3dp" />
-
-            </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
-
-            <Button
-                android:id="@+id/bt_cadastrar_usuario"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="36dp"
-                android:background="@drawable/background_button_cadastro"
-                android:text="Cadastrar"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tv_voltar_cadastro_usuario"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_height="match_parent"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:padding="10dp"
-                android:text="VOLTAR"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
+                android:layout_marginTop="65dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        </LinearLayout>
+                <com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout
+                    android:id="@+id/customTextInputLayout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:clipChildren="false"
+                    android:textColorHint="@color/white"
+                    app:hintTextAppearance="@style/myHintTextAppearance"
+                    app:layout_constraintBottom_toTopOf="@+id/customTextInputLayout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/edt_nome_usuario_cadastro"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_marginBottom="3dp"
+                        android:background="@drawable/background_edittext_cadastro"
+                        android:drawableLeft="@drawable/ic_person_cadastro_usuario"
+                        android:drawablePadding="5dp"
+                        android:hint="Nome"
+                        android:inputType="textCapWords|textPersonName"
+                        android:padding="8dp"
+                        android:textColor="@color/white"
+                        android:translationY="3dp" />
+
+                </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
+
+                <com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout
+                    android:id="@+id/customTextInputLayout3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="2dp"
+                    android:clipChildren="false"
+                    android:textColorHint="@color/white"
+                    app:hintTextAppearance="@style/myHintTextAppearance"
+                    app:layout_constraintBottom_toTopOf="@+id/customTextInputLayout4"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/customTextInputLayout">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/edt_nome_congregacao_usuario_cadastro"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_marginBottom="3dp"
+                        android:background="@drawable/background_edittext_cadastro"
+                        android:drawableLeft="@drawable/ic_congregacao_cadastro_usuario"
+                        android:drawablePadding="5dp"
+                        android:hint="Congregação"
+                        android:inputType="textCapWords|textPersonName"
+                        android:padding="8dp"
+                        android:textColor="@color/white"
+                        android:translationY="3dp" />
+
+                </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
+
+                <com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout
+                    android:id="@+id/customTextInputLayout4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="2dp"
+                    android:clipChildren="false"
+                    android:textColorHint="@color/white"
+                    app:hintTextAppearance="@style/myHintTextAppearance"
+                    app:layout_constraintBottom_toTopOf="@+id/customTextInputLayout5"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/customTextInputLayout3">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/edt_email_usuario_cadastro"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_marginBottom="3dp"
+                        android:background="@drawable/background_edittext_cadastro"
+                        android:drawableLeft="@drawable/ic_email_cadastro_usuario"
+                        android:drawablePadding="5dp"
+                        android:hint="Email"
+                        android:inputType="textEmailAddress"
+                        android:padding="8dp"
+                        android:textColor="@color/white"
+                        android:translationY="3dp" />
+
+                </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
+
+                <com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout
+                    android:id="@+id/customTextInputLayout5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="2dp"
+                    android:clipChildren="false"
+                    android:textColorHint="@color/white"
+                    app:hintTextAppearance="@style/myHintTextAppearance"
+                    app:layout_constraintBottom_toTopOf="@+id/customTextInputLayout6"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/customTextInputLayout4">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/edt_senha_usuario_cadastro"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_marginBottom="3dp"
+                        android:background="@drawable/background_edittext_cadastro"
+                        android:drawableLeft="@drawable/ic_cadeado_cadastro_usuario"
+                        android:drawablePadding="5dp"
+                        android:hint="Senha"
+                        android:inputType="textPassword"
+                        android:padding="8dp"
+                        android:textColor="@color/white"
+                        android:translationY="3dp" />
+
+                </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
+
+                <com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout
+                    android:id="@+id/customTextInputLayout6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="2dp"
+                    android:clipChildren="false"
+                    android:textColorHint="@color/white"
+                    app:hintTextAppearance="@style/myHintTextAppearance"
+                    app:layout_constraintBottom_toTopOf="@+id/bt_cadastra_usuario"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/customTextInputLayout5">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/edt_confirm_senha_usuario_cadastro"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_marginBottom="3dp"
+                        android:background="@drawable/background_edittext_cadastro"
+                        android:drawableLeft="@drawable/ic_cadeado_cadastro_usuario"
+                        android:drawablePadding="5dp"
+                        android:hint="Confirmar Senha"
+                        android:inputType="textPassword"
+                        android:padding="8dp"
+                        android:textColor="@color/white"
+                        android:translationY="3dp" />
+
+                </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
+
+                <Button
+                    android:id="@+id/bt_cadastrar_usuario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="36dp"
+                    android:background="@drawable/background_button_cadastro"
+                    android:text="Cadastrar"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_voltar_cadastro_usuario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="VOLTAR"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/frame_progress_cadastro"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:id="@+id/progress_bar_cadastrar"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="252dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+    </FrameLayout>
+
+</android.support.constraint.ConstraintLayout>
 
 
-    </android.support.constraint.ConstraintLayout>-->
-
-    <android.support.constraint.ConstraintLayout
+    <!--<android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="20dp">
@@ -310,7 +333,6 @@
 
             </com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout>
 
-
             <com.qi0.weslley.gerenciadordediscursos.helper.CustomTextInputLayout
                 android:id="@+id/customTextInputLayout3"
                 android:layout_width="match_parent"
@@ -478,13 +500,36 @@
 
         </LinearLayout>
 
+        <FrameLayout
+            android:id="@+id/frame_progress_cadastro"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    </android.support.constraint.ConstraintLayout>
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-    <!--<android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="20dp">
+                <ProgressBar
+                    android:id="@+id/progressBar_cadastrar"
+                    android:layout_width="65dp"
+                    android:layout_height="65dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="252dp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </android.support.constraint.ConstraintLayout>
+        </FrameLayout>
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_orador_detalhe_fragment"
@@ -739,5 +784,3 @@
 
 
     </android.support.constraint.ConstraintLayout>-->
-
-</android.support.v4.widget.NestedScrollView>

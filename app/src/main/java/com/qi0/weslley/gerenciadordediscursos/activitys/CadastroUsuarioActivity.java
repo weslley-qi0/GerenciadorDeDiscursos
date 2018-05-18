@@ -5,8 +5,11 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +29,8 @@ import es.dmoral.toasty.Toasty;
 
 public class CadastroUsuarioActivity extends AppCompatActivity {
 
+    FrameLayout frameLayoutProgressBar;
+    ProgressBar progressBar;
     FirebaseAuth firebaseAuth;
     DatabaseReference databaseReference;
     String userUID;
@@ -45,6 +50,8 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         final EditText edtEmailCadasro = findViewById(R.id.edt_email_usuario_cadastro);
         final EditText edtSenhaCadasro = findViewById(R.id.edt_senha_usuario_cadastro);
         final EditText edtConfirmarSenhaCadasro = findViewById(R.id.edt_confirm_senha_usuario_cadastro);
+        frameLayoutProgressBar = findViewById(R.id.frame_progress_cadastro);
+        progressBar = findViewById(R.id.progress_bar_cadastrar);
 
 
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +120,12 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
     }
 
     public void cadastrarUsuario(){
+
+        frameLayoutProgressBar.setBackgroundResource(R.color.backgroud_recycle_agenda);
+        progressBar.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
         firebaseAuth.createUserWithEmailAndPassword(
                 usuario.getEmail(), usuario.getSenha()
         ).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -138,6 +151,10 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
                     }
                     Toasty.info(CadastroUsuarioActivity.this, excecao, Toast.LENGTH_SHORT, true).show();
                 }
+
+                frameLayoutProgressBar.setBackgroundResource(R.color.transparent);
+                progressBar.setVisibility(View.GONE);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             }
         });
     }
@@ -146,7 +163,5 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
         databaseReference.child("usuarios").child(userUID).setValue(usuario);
         databaseReference.child("user_data").child(userUID).child("oradores").push();
-
-
     }
 }

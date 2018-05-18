@@ -164,6 +164,15 @@ public class AdicionarEditarActivity extends BaseActivity {
         if (congregacaoelecionada != null) {
             edtNomeCongregacao.setText(congregacaoelecionada.getNomeCongregacao());
             edtCidadeCongregacao.setText(congregacaoelecionada.getCidadeCongregação());
+
+            dialogo.setNeutralButton("EXCLUIR", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Toast.makeText(AdicionarEditarActivity.this, "Excuido", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    finish();
+                }
+            });
         }
 
         dialogo.setPositiveButton("Salvar", new DialogInterface.OnClickListener() {
@@ -185,6 +194,7 @@ public class AdicionarEditarActivity extends BaseActivity {
         }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
                 finish();
             }
         });
@@ -193,7 +203,6 @@ public class AdicionarEditarActivity extends BaseActivity {
         final AlertDialog alertDialog = dialogo.create();
 
         alertDialog.show();
-
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 
         edtCidadeCongregacao.addTextChangedListener(new TextWatcher() {
@@ -259,16 +268,29 @@ public class AdicionarEditarActivity extends BaseActivity {
                         .child("congregacoes")
                         .child(idCongregacao)
                         .setValue(congregacaoNova);
-                Toasty.success(AdicionarEditarActivity.this, "Congregação Salva", Toast.LENGTH_SHORT).show();
+
+                if (congregacaoelecionada != null){
+                    Toasty.success(AdicionarEditarActivity.this, "Congregação Editada", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toasty.success(AdicionarEditarActivity.this, "Congregação Salva", Toast.LENGTH_SHORT).show();
+                }
+
                 finish();
             } else {
-                Toasty.info(AdicionarEditarActivity.this, "Preencha todos os Campos!", Toast.LENGTH_SHORT).show();
-                //Toasty.info(AdicionarEditarActivity.this, "Digite o nome da Cidade!", Toast.LENGTH_SHORT).show();
-                //dialogoAddCongregacao();
+                Toasty.info(AdicionarEditarActivity.this, "Adicione uma cidade!", Toast.LENGTH_SHORT).show();
+                if (!nomeCongregacao.isEmpty()){
+                    dialogoAddCongregacao();
+                    edtNomeCongregacao.setText(nomeCongregacao);
+                    edtCidadeCongregacao.setText("");
+                }
             }
         } else {
-            Toasty.info(AdicionarEditarActivity.this, "Preencha todos os Campos!", Toast.LENGTH_SHORT).show();
-            //dialogoAddCongregacao();
+            Toasty.info(AdicionarEditarActivity.this, "Adicione o nome da congregação!", Toast.LENGTH_SHORT).show();
+            if (!cidadeCongregacao.isEmpty()){
+                dialogoAddCongregacao();
+                edtCidadeCongregacao.setText(cidadeCongregacao);
+                edtNomeCongregacao.setText("");
+            }
         }
     }
 
@@ -311,6 +333,7 @@ public class AdicionarEditarActivity extends BaseActivity {
         }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
                 finish();
             }
         });
@@ -385,16 +408,29 @@ public class AdicionarEditarActivity extends BaseActivity {
                         .child("discursos")
                         .child(idDisurso)
                         .setValue(discursoNovo);
-                Toasty.success(AdicionarEditarActivity.this, "Discurso Salvo", Toast.LENGTH_SHORT).show();
+
+                if (discursoSelecionado != null){
+                    Toasty.success(AdicionarEditarActivity.this, "Discurso Editado", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toasty.success(AdicionarEditarActivity.this, "Discurso Salvo", Toast.LENGTH_SHORT).show();
+                }
+
                 finish();
             } else {
-                Toasty.info(AdicionarEditarActivity.this, "Preencha todos os Campos!", Toast.LENGTH_SHORT).show();
-                //Toasty.info(AdicionarEditarActivity.this, "Digite o nome da Cidade!", Toast.LENGTH_SHORT).show();
-                //dialogoAddCongregacao();
+                Toasty.info(AdicionarEditarActivity.this, "Adicione um tema!", Toast.LENGTH_SHORT).show();
+                if (!numeroDiscurso.isEmpty()){
+                    dialogoAddDiscurso();
+                    edtNumeroDiscurso.setText(numeroDiscurso);
+                    edtTemaDiscurso.setText("");
+                }
             }
         } else {
-            Toasty.info(AdicionarEditarActivity.this, "Preencha todos os Campos!", Toast.LENGTH_SHORT).show();
-            //dialogoAddCongregacao();
+            Toasty.info(AdicionarEditarActivity.this, "Adicione o numero do discurso!", Toast.LENGTH_SHORT).show();
+            if (!temaDiscurso.isEmpty()){
+                dialogoAddDiscurso();
+                edtTemaDiscurso.setText(temaDiscurso);
+                edtNumeroDiscurso.setText("");
+            }
         }
     }
 

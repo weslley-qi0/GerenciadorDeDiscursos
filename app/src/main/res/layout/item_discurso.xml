@@ -9,7 +9,8 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="2dp">
+        android:longClickable="true"
+        android:background="@drawable/selector_card_view_pressed">
 
         <TextView
             android:id="@+id/tv_numero_discurso"

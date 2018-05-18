@@ -20,6 +20,7 @@ import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
+import com.qi0.weslley.gerenciadordediscursos.helper.VerificaConeccao;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -65,12 +66,23 @@ public class DetalheOradorFragment extends BaseFragment {
 
         detalheNomeOrador.setText(oradorSelecionado.getNome());
         ratingBarDetalheOrador.setRating(oradorSelecionado.getRatingOrador());
-        if( oradorSelecionado.getUrlFotoOrador() != null ){
-            Uri uri = Uri.parse( oradorSelecionado.getUrlFotoOrador() );
-            Glide.with(getContext())
-                    .load(uri)
-                    .error(R.drawable.img_padrao)
-                    .into( fotoOradorDetalhe );
+
+
+        if (VerificaConeccao.isOnline(getActivity())) {
+            if (oradorSelecionado.getUrlFotoOrador() != null) {
+                Uri uri = Uri.parse(oradorSelecionado.getUrlFotoOrador());
+                Glide.with(getContext())
+                        .load(uri)
+                        .error(R.drawable.img_padrao)
+                        .into(fotoOradorDetalhe);
+            }
+        } else {
+            if (oradorSelecionado.getUrlFotoOrador() == null) {
+                Glide.with(getContext())
+                        .load(R.drawable.img_padrao)
+                        .error(R.drawable.img_padrao)
+                        .into(fotoOradorDetalhe);
+            }
         }
     }
 

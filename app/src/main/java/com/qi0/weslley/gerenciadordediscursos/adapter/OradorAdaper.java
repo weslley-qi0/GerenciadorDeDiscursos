@@ -1,16 +1,23 @@
 package com.qi0.weslley.gerenciadordediscursos.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.qi0.weslley.gerenciadordediscursos.R;
+import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 import com.squareup.picasso.Picasso;
 
@@ -39,7 +46,7 @@ public class OradorAdaper extends RecyclerView.Adapter<OradorAdaper.MyViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
         Orador orador = oradores.get( position );
         holder.nomeOrador.setText( orador.getNome() );
         holder.congregacao.setText( "" );
@@ -61,10 +68,11 @@ public class OradorAdaper extends RecyclerView.Adapter<OradorAdaper.MyViewHolder
         return oradores.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView nomeOrador, congregacao, ultimaVisita;
         CircleImageView fotoOrador;
+        //ImageView menuItem;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -72,6 +80,9 @@ public class OradorAdaper extends RecyclerView.Adapter<OradorAdaper.MyViewHolder
             congregacao = itemView.findViewById(R.id.tv_orador_nome_congregacao);
             ultimaVisita = itemView.findViewById(R.id.tv_data_ultima_visita);
             fotoOrador = itemView.findViewById(R.id.item_orador_foto);
+            //menuItem = itemView.findViewById(R.id.menu_item_recycle_view_orador);
         }
+
     }
+
 }

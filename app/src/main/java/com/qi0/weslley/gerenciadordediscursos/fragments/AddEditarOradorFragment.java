@@ -45,6 +45,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
+import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
 import com.qi0.weslley.gerenciadordediscursos.helper.Mask;
 import com.qi0.weslley.gerenciadordediscursos.helper.Permissao;
 import com.qi0.weslley.gerenciadordediscursos.helper.VerificaConeccao;
@@ -91,7 +92,9 @@ public class AddEditarOradorFragment extends BaseFragment {
     EditText edtCidadeCongregacao;
 
     // Variaveis
-    Orador orador;
+    //Orador orador;
+    Orador oradorNovo;
+    Orador oradorSelecionado;
     byte[] dadosImagem;
     float ratingOrador = 3;
     Congregacao congregacaoSelecionada;
@@ -135,7 +138,7 @@ public class AddEditarOradorFragment extends BaseFragment {
         //Validar permissões
         Permissao.validarPermissoes(permissoesNecessarias, getActivity(), 1);
 
-        orador = (Orador) getArguments().getSerializable("oradorSelecionado");
+        oradorSelecionado = (Orador) getArguments().getSerializable("oradorSelecionado");
         userUID = firebaseAuth.getCurrentUser().getUid();
         pegarCongregacoesDoBanco();
 
@@ -151,8 +154,8 @@ public class AddEditarOradorFragment extends BaseFragment {
         ratingBarOrador = view.findViewById(R.id.ratindBar_orador);
         tvRatingOrador = view.findViewById(R.id.tv_rating_orador);
 
-        if (orador != null) {
-            congregacaoSelecionada = orador.getCongregacao();
+        if (oradorSelecionado != null) {
+            congregacaoSelecionada = oradorSelecionado.getCongregacao();
             setValoresNoFormulario();
         }
 
@@ -252,41 +255,42 @@ public class AddEditarOradorFragment extends BaseFragment {
     }
 
     private void setValoresNoFormulario() {
-        Congregacao congregacao = orador.getCongregacao();
-        edtNome.setText(orador.getNome());
-        edtCongregacao.setText(congregacao.getNomeCongregacao());
-        edtTelefone.setText(orador.getTelefone());
-        edtEmail.setText(orador.getEmail());
-        ratingBarOrador.setRating(orador.getRatingOrador());
 
-        if (VerificaConeccao.isOnline(getActivity())) {
-            if (orador.getUrlFotoOrador() != null) {
+        Congregacao congregacao = oradorSelecionado.getCongregacao();
+        edtNome.setText(oradorSelecionado.getNome());
+        edtCongregacao.setText(congregacao.getNomeCongregacao());
+        edtTelefone.setText(oradorSelecionado.getTelefone());
+        edtEmail.setText(oradorSelecionado.getEmail());
+        ratingBarOrador.setRating(oradorSelecionado.getRatingOrador());
+
+        /*if (VerificaConeccao.isOnline(getActivity())) {
+            if (oradorSelecionado.getUrlFotoOrador() != null) {
                 pegarFoto();
-                Uri uri = Uri.parse(orador.getUrlFotoOrador());
+                Uri uri = Uri.parse(oradorSelecionado.getUrlFotoOrador());
                 Glide.with(getContext())
                         .load(uri)
                         .error(R.drawable.img_padrao)
                         .into(fotoCadastroOrador);
             }
         } else {
+            Uri uri = Uri.parse(oradorSelecionado.getUrlFotoOrador());
             Glide.with(getContext())
-                    .load(R.drawable.img_padrao)
+                    .load(uri)
+                    .error(R.drawable.img_padrao)
                     .into(fotoCadastroOrador);
-        }
+        }*/
 
-        /*if (orador.getUrlFotoOrador() != null) {
-            pegarFoto();
-            Uri uri = Uri.parse(orador.getUrlFotoOrador());
+        if (oradorSelecionado.getUrlFotoOrador() != null) {
+            //pegarFoto();
+            Uri uri = Uri.parse(oradorSelecionado.getUrlFotoOrador());
             Glide.with(getContext())
                     .load(uri)
                     .error(R.drawable.img_padrao)
                     .into(fotoCadastroOrador);
 
-        }else {
-            pegarFotoSalvaInternamente(orador.getCaminhoInternoFoto()); //Todo Remover Depois
-        }*/
+        }
 
-        switch ((int) orador.getRatingOrador()) {
+        switch ((int) oradorSelecionado.getRatingOrador()) {
             case 1:
                 tvRatingOrador.setText("Fraco");
                 break;
@@ -310,7 +314,7 @@ public class AddEditarOradorFragment extends BaseFragment {
     private void pegarFoto() {
 
         Glide.with(getContext())
-                .load(orador.getUrlFotoOrador())
+                .load(oradorSelecionado.getUrlFotoOrador())
                 .asBitmap()
                 .into(target);
 
@@ -334,34 +338,75 @@ public class AddEditarOradorFragment extends BaseFragment {
                 getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                         WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
-                if (orador == null) {
+                if (oradorSelecionado == null) {
                     if (dadosImagem != null) {
-
                         if (VerificaConeccao.isOnline(getActivity())) {
                             uploadFotoOrador(dadosImagem);
                         } else {
                             uploadOrador();
+                            Toasty.error(getContext(), "A Foto nao Foi Salva", Toast.LENGTH_SHORT).show();
+                            Toasty.info(getContext(), "Verifique sua Conecção", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         uploadOrador();
                     }
                 } else {
 
-                    idOrador = orador.getId();
+                    idOrador = oradorSelecionado.getId();
 
-                    if (dadosImagem != null) {
+                    if (oradorSelecionado.getUrlFotoOrador() != null) {
                         if (VerificaConeccao.isOnline(getActivity())) {
+                            if (dadosImagem == null) {
+                                urlFotoOrador = oradorSelecionado.getUrlFotoOrador();
+                                uploadOrador();
+                            } else {
+                                deleteImageAtual(oradorSelecionado.getUrlFotoOrador());
+                                uploadFotoOrador(dadosImagem);
+                            }
+                        } else {
+                            if (dadosImagem != null){
+                                urlFotoOrador = oradorSelecionado.getUrlFotoOrador();
+                                uploadOrador();
+                                Toasty.error(getContext(), "A Foto Não Foi Atualizada", Toast.LENGTH_SHORT).show();
+                                Toasty.info(getContext(), "Verifique sua Conecção", Toast.LENGTH_SHORT).show();
+                            }else {
+                                urlFotoOrador = oradorSelecionado.getUrlFotoOrador();
+                                uploadOrador();
+                            }
 
-                            deleteImageAtual(orador.getUrlFotoOrador());
-                            uploadFotoOrador(dadosImagem);
+                        }
+                    } else {
+                        if (dadosImagem != null) {
+                            if (VerificaConeccao.isOnline(getActivity())) {
+                                uploadFotoOrador(dadosImagem);
+                            } else {
+                                uploadOrador();
+                                Toasty.error(getContext(), "A Foto Não Foi Atualizada", Toast.LENGTH_SHORT).show();
+                                Toasty.info(getContext(), "Verifique sua Conecção", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            uploadOrador();
+                        }
+
+                    }
+
+                    //Todo Remover esse bloco de oodigo se o de cima fucionar sem bugs
+                    /*if (dadosImagem != null) {
+                        if (VerificaConeccao.isOnline(getActivity())) {
+                            if (oradorSelecionado.getUrlFotoOrador() != null){
+                                urlFotoOrador = oradorSelecionado.getUrlFotoOrador();
+                                uploadOrador();
+                            }else {
+                                deleteImageAtual(oradorSelecionado.getUrlFotoOrador());
+                                uploadFotoOrador(dadosImagem);
+                            }
 
                         } else {
                             uploadOrador();
                         }
                     } else {
                         uploadOrador();
-                    }
-
+                    }*/
                 }
 
             } else {
@@ -374,25 +419,32 @@ public class AddEditarOradorFragment extends BaseFragment {
 
     private void uploadOrador() {
 
-        orador = new Orador();
+        oradorNovo = new Orador();
 
-        orador.setId(idOrador);
-        orador.setNome(nomeOrador);
-        orador.setCongregacao(congregacaoSelecionada);
-        orador.setTelefone(telefoneOrador);
-        orador.setEmail(emailOrador);
-        orador.setUltimaVisita("");
-        orador.setUrlFotoOrador(urlFotoOrador);
-        orador.setDiscursoListOrador(discursos);
-        orador.setRatingOrador(ratingOrador);
+        oradorNovo.setId(idOrador);
+        oradorNovo.setNome(nomeOrador);
+        oradorNovo.setCongregacao(congregacaoSelecionada);
+        oradorNovo.setTelefone(telefoneOrador);
+        oradorNovo.setEmail(emailOrador);
+        oradorNovo.setUltimaVisita("");
+        oradorNovo.setUrlFotoOrador(urlFotoOrador);
+        oradorNovo.setDiscursoListOrador(discursos);
+        oradorNovo.setRatingOrador(ratingOrador);
 
         databaseReference.child("user_data")
                 .child(userUID)
                 .child("oradores")
                 .child(idOrador)
-                .setValue(orador);
+                .setValue(oradorNovo);
 
         progressBar.setVisibility(View.GONE);
+
+        if (oradorSelecionado == null) {
+            Toasty.success(getContext(), "Orador Salvo", Toast.LENGTH_SHORT).show();
+        } else {
+            Toasty.success(getContext(), "Orador Atualizado", Toast.LENGTH_SHORT).show();
+        }
+
         getActivity().finish();
     }
 
@@ -402,7 +454,7 @@ public class AddEditarOradorFragment extends BaseFragment {
                 .child("imagens")
                 .child(userUID)
                 .child("orador_perfil")
-                .child(orador.getId() + ".jpeg");
+                .child(oradorSelecionado.getId() + ".jpeg");
 
         imagemRef.delete().addOnFailureListener(new OnFailureListener() {
             @Override

@@ -5,8 +5,11 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +27,8 @@ import es.dmoral.toasty.Toasty;
 
 public class LoginActivity extends AppCompatActivity {
 
+    FrameLayout frameLayoutProgressBar;
+    ProgressBar progressBar;
     FirebaseAuth firebaseAuth;
     Usuario usuario;
 
@@ -36,6 +41,8 @@ public class LoginActivity extends AppCompatActivity {
         TextView tvCadastrese = findViewById(R.id.tv_ir_cadastro_usuario);
         final EditText edtEmailLogin = findViewById(R.id.edt_email_usuario_login);
         final EditText edtSenhaLogin = findViewById(R.id.edt_senha_usuario_login);
+        frameLayoutProgressBar = findViewById(R.id.frame_progress_cadastro);
+        progressBar = findViewById(R.id.progress_bar_logim);
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,6 +90,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void logarUsuario(){
+
+        frameLayoutProgressBar.setBackgroundResource(R.color.backgroud_recycle_agenda);
+        progressBar.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
         firebaseAuth = ConfiguracaoFirebase.getAuth();
         firebaseAuth.signInWithEmailAndPassword(
                 usuario.getEmail(), usuario.getSenha()
@@ -105,6 +118,9 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     Toasty.info(LoginActivity.this, excecao, Toast.LENGTH_SHORT, true).show();
                 }
+                frameLayoutProgressBar.setBackgroundResource(R.color.transparent);
+                progressBar.setVisibility(View.GONE);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             }
         });
     }

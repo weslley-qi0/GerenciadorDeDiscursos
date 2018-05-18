@@ -1,27 +1,38 @@
 package com.qi0.weslley.gerenciadordediscursos.fragments;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
@@ -32,6 +43,8 @@ import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
+import es.dmoral.toasty.Toasty;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,6 +61,7 @@ public class OradoresFragment extends BaseFragment {
 
     DatabaseReference databaseReference;
     FirebaseAuth firebaseAuth;
+    StorageReference storageReference;
     ValueEventListener valueEventListenerOradores;
     String userUID;
 
@@ -114,7 +128,7 @@ public class OradoresFragment extends BaseFragment {
             @Override
             public void onLongItemClick(View view, int position) {
                 oradorSelecionado = (Orador) oradoresList.get(position);
-                registerForContextMenu(view);
+                showPopup(view);
             }
 
             @Override
@@ -164,31 +178,57 @@ public class OradoresFragment extends BaseFragment {
         });
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        getActivity().getMenuInflater().inflate(R.menu.menu_recycle_view,menu);
+    private void deleteImagePerfilOrador() {
+
+        storageReference = ConfiguracaoFirebase.getFirebaseStorage();
+
+        StorageReference imagemRef = storageReference
+                .child("imagens")
+                .child(userUID)
+                .child("orador_perfil")
+                .child(oradorSelecionado.getId() + ".jpeg");
+
+        imagemRef.delete().addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+
+            }
+        });
     }
 
-    @Override
-    public boolean onContextItemSelected(
-            MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.item_editar:
-
-                Intent intentEditarOrador = new Intent(getActivity(), AdicionarEditarActivity.class);
-                intentEditarOrador.putExtra("qualFragmentAbrir", "AddOradorFragment");
-                intentEditarOrador.putExtra("oradorSelecionado", oradorSelecionado);
-                startActivity(intentEditarOrador);
-
-                return true;
-            case R.id.item_deletar:
-
-                databaseReference.child("user_data").child(userUID).child("oradores").child(oradorSelecionado.getId()).removeValue();
-
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-        }
+    @SuppressLint("RestrictedApi")
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(getContext(), v);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.menu_recycle_view, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.item_editar:
+                        Intent intentEditarOrador = new Intent(getActivity(), AdicionarEditarActivity.class);
+                        intentEditarOrador.putExtra("qualFragmentAbrir", "AddOradorFragment");
+                        intentEditarOrador.putExtra("oradorSelecionado", oradorSelecionado);
+                        startActivity(intentEditarOrador);
+                        return true;
+                    case R.id.item_deletar:
+                        databaseReference.child("user_data").child(userUID).child("oradores").child(oradorSelecionado.getId()).removeValue();
+                        deleteImagePerfilOrador();
+                        Toasty.success(getContext(), "Orador Deletado", Toast.LENGTH_SHORT).show();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+        @SuppressLint("RestrictedApi") MenuPopupHelper menuHelper = new MenuPopupHelper(getContext(), (MenuBuilder) popup.getMenu(), v);
+        menuHelper.setForceShowIcon(true);
+        menuHelper.setGravity(Gravity.END);
+        menuHelper.show();
     }
 }
