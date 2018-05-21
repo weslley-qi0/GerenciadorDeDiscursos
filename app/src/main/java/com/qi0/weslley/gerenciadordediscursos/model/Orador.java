@@ -2,14 +2,22 @@ package com.qi0.weslley.gerenciadordediscursos.model;
 
 import android.support.annotation.NonNull;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Orador implements Serializable, Comparable<Orador>{
 
     private String id;
     private String nome;
-    private Congregacao congregacao;
+    private String idCongregacao;
     private String telefone;
     private String email;
     private String ultimaVisita;
@@ -21,16 +29,43 @@ public class Orador implements Serializable, Comparable<Orador>{
     public Orador() {
     }
 
-    public Orador(String id, String nome, Congregacao congregacao, String telefone, String email, String ultimaVisita, String caminhoInternoFoto, String urlFotoOrador, List<Discurso> discursoListOrador, float ratingOrador) {
+    public Orador(String id, String nome, String idCongregacao, String telefone, String email, String ultimaVisita, String caminhoInternoFoto, String urlFotoOrador, List<Discurso> discursoListOrador, float ratingOrador) {
         this.id = id;
         this.nome = nome;
-        this.congregacao = congregacao;
+        this.idCongregacao = idCongregacao;
         this.telefone = telefone;
         this.email = email;
         this.ultimaVisita = ultimaVisita;
+        this.caminhoInternoFoto = caminhoInternoFoto;
         this.urlFotoOrador = urlFotoOrador;
         this.discursoListOrador = discursoListOrador;
         this.ratingOrador = ratingOrador;
+    }
+    // Pega Todos os oradores e seta no adapter para poder pegar a quantidade
+    public static List<Orador> pegarOradoresDoBanco(String userUID){
+
+        final List<Orador> oradoresList = new ArrayList<>();
+        DatabaseReference databaseReference;
+        databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
+
+        databaseReference.child("user_data").child(userUID).child("oradores").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                oradoresList.clear();
+                for (DataSnapshot dados : dataSnapshot.getChildren()){
+                    Orador orador = dados.getValue(Orador.class);
+                    oradoresList.add(orador);
+                    Collections.sort(oradoresList);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        return oradoresList;
     }
 
     public String getId() {
@@ -49,12 +84,12 @@ public class Orador implements Serializable, Comparable<Orador>{
         this.nome = nome;
     }
 
-    public Congregacao getCongregacao() {
-        return congregacao;
+    public String getIdCongregacao() {
+        return idCongregacao;
     }
 
-    public void setCongregacao(Congregacao congregacao) {
-        this.congregacao = congregacao;
+    public void setIdCongregacao(String idCongregacao) {
+        this.idCongregacao = idCongregacao;
     }
 
     public String getTelefone() {

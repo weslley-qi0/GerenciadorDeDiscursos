@@ -2,7 +2,16 @@ package com.qi0.weslley.gerenciadordediscursos.model;
 
 import android.support.annotation.NonNull;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Discurso implements Serializable, Comparable<Discurso>{
 
@@ -20,6 +29,35 @@ public class Discurso implements Serializable, Comparable<Discurso>{
         this.numero = numero;
         this.tema = tema;
         this.ultimoProferimento = ultimoProferimento;
+    }
+
+    public static List<Discurso> pegarDiscursosDoBanco(String userUID){
+
+        final List<Discurso> discursosList = new ArrayList<>();
+
+        DatabaseReference databaseReference;
+        databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
+
+        databaseReference.child("user_data").child(userUID).child("discursos").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                discursosList.clear();
+                for (DataSnapshot dados : dataSnapshot.getChildren()){
+                    Discurso discurso = dados.getValue(Discurso.class);
+                    discursosList.add(discurso);
+                    Collections.sort(discursosList);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        return discursosList;
     }
 
     public String getIdDiscurso() {

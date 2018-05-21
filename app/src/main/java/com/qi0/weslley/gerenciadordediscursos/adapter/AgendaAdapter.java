@@ -9,21 +9,38 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.qi0.weslley.gerenciadordediscursos.R;
+import com.qi0.weslley.gerenciadordediscursos.model.Agenda;
+import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
+import com.qi0.weslley.gerenciadordediscursos.model.Discurso;
+import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHolder>{
 
-    private List<Date> datasList;
+    private List<Agenda> agendaList;
+    private List<Congregacao> congregacaoList;
+    private List<Orador> oradorList;
+    private List<Discurso> discursoList;
+
+    private Context context;
     private LayoutInflater mInflater;
 
-    public AgendaAdapter(Context context, List<Date> datas) {
-        this.mInflater = LayoutInflater.from(context);
-        this.datasList = datas;
+    public AgendaAdapter(List<Agenda> agendaList, List<Congregacao> congregacaoList, List<Orador> oradoresList, List<Discurso> discursosList, Context context) {
+        this.agendaList = agendaList;
+        this.congregacaoList = congregacaoList;
+        this.oradorList = oradoresList;
+        this.discursoList = discursosList;
+        this.context = context;
     }
+
+
 
     @NonNull
     @Override
@@ -38,10 +55,19 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        Date data = datasList.get(position);
-        Calendar cal = Calendar.getInstance();
 
-        cal.setTime(data);
+        Agenda agenda = agendaList.get(position);
+
+        SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy");
+        Date data = null;
+
+        if (agenda.getData() != null) {
+            try {
+                data = formato.parse(agenda.getData());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
 
         SimpleDateFormat dia = new SimpleDateFormat("dd");
         SimpleDateFormat mes = new SimpleDateFormat("MMM");
@@ -54,16 +80,21 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHold
         holder.tvDia.setText(diaFormatado);
         holder.tvMes.setText(mesFormatado.toUpperCase());
         holder.tvAno.setText(anoFormatado);
+
+        holder.agendaCongregacao.setText(pegarNomeCongregacao(agenda));
+        holder.agendaOrador.setText(pegarNomeOrador(agenda));
+        holder.agendaDiscurso.setText(pegarTemaDiscurso(agenda));
+
     }
 
     @Override
     public int getItemCount() {
-        return datasList.size();
+        return agendaList.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvDia, tvMes, tvAno;
+        TextView tvDia, tvMes, tvAno, agendaOrador, agendaCongregacao, agendaDiscurso;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -71,6 +102,50 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHold
             tvDia = itemView.findViewById(R.id.tv_dia_agenda_lis);
             tvMes = itemView.findViewById(R.id.tv_mes_agenda_list);
             tvAno = itemView.findViewById(R.id.tv_ano_agenda_list);
+            agendaCongregacao = itemView.findViewById(R.id.tv_agenda_congregacao);
+            agendaOrador = itemView.findViewById(R.id.tv_agenda_orador);
+            agendaDiscurso = itemView.findViewById(R.id.tv_agenda_tema);
+
         }
+    }
+
+    private String pegarNomeCongregacao(Agenda agenda){
+        String nomeCong = "";
+        for (Congregacao congregacao : congregacaoList){
+            if (congregacao.getIdCongregacao() != null) {
+                String idCongregacao = congregacao.getIdCongregacao();
+                if (idCongregacao.equals(agenda.getIdCongregacao())) {
+                    nomeCong = congregacao.getNomeCongregacao();
+                }
+            }
+        }
+        return nomeCong;
+    }
+
+    private String pegarNomeOrador(Agenda agenda){
+
+        String nomeOrador = "";
+        for (Orador orador : oradorList){
+            if (orador.getId() != null) {
+                String idOrador = orador.getId();
+                if (idOrador.equals(agenda.getIdOrador())) {
+                    nomeOrador = orador.getNome();
+                }
+            }
+        }
+        return nomeOrador;
+    }
+
+    private String pegarTemaDiscurso(Agenda agenda){
+        String temaDiscurso = "";
+        for (Discurso discurso : discursoList){
+            if (discurso.getIdDiscurso() != null) {
+                String idDiscurso = discurso.getIdDiscurso();
+                if (idDiscurso.equals(agenda.getIdDiscurso())) {
+                    temaDiscurso = discurso.getTema();
+                }
+            }
+        }
+        return temaDiscurso;
     }
 }

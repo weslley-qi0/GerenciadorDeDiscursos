@@ -16,8 +16,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
+import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 import com.squareup.picasso.Picasso;
 
@@ -84,5 +88,35 @@ public class OradorAdaper extends RecyclerView.Adapter<OradorAdaper.MyViewHolder
         }
 
     }
+
+    /*private void pegarCongregacoesDoBanco() {
+
+        valueEventListenerOradores = databaseReference.child("user_data").child(userUID).child("congregacoes").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                congregacoesList.clear();
+                for (DataSnapshot dados : dataSnapshot.getChildren()) {
+                    Congregacao congregacao = dados.getValue(Congregacao.class);
+                    congregacoesList.add(congregacao);
+
+                    if (oradorSelecionado != null) {
+                        idCongregacaoSelecionada = oradorSelecionado.getIdCongregacao();
+                        if (congregacao.getIdCongregacao().equals(oradorSelecionado.getIdCongregacao())) {
+                            congregacaoSelecionada = congregacao;
+                            setValoresNoFormulario();
+                            //edtCongregacao.setText(congregacaoSelecionada.getNomeCongregacao());
+                        }
+                    }
+                }
+
+                //adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }*/
 
 }

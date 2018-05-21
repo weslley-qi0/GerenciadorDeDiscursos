@@ -36,6 +36,7 @@ import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
 import com.qi0.weslley.gerenciadordediscursos.adapter.CongregacaoAdapter;
 import com.qi0.weslley.gerenciadordediscursos.helper.RecyclerItemClickListener;
 import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
+import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,6 +53,7 @@ public class CongregacoesFragment extends BaseFragment{
     CongregacaoAdapter adapter;
     Congregacao congregacaoSelecionada;
     ArrayList congregacoesList = new ArrayList();
+    ArrayList oradoresList = new ArrayList();
 
     DatabaseReference databaseReference;
     FirebaseAuth firebaseAuth;
@@ -83,7 +85,7 @@ public class CongregacoesFragment extends BaseFragment{
         //recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
 
-        adapter = new CongregacaoAdapter(congregacoesList, getContext());
+        adapter = new CongregacaoAdapter(congregacoesList,oradoresList, getContext());
 
         recyclerView.setAdapter(adapter);
 
@@ -124,8 +126,6 @@ public class CongregacoesFragment extends BaseFragment{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             }
         }));
-
-
 
         return view;
     }
@@ -175,28 +175,21 @@ public class CongregacoesFragment extends BaseFragment{
         });
     }
 
+    // Pega Todos os oradores e seta no adapter para poder pegar a quantidade
     private void pegarQuantidadeOradores(){
 
-        DatabaseReference quantOradorRef = databaseReference.child("user_data").child(userUID).child("oradores");
-        quantOradorRef.orderByChild("congregacoes").equalTo("Cong_00").addChildEventListener(new ChildEventListener() {
+        valueEventListenerCongregacao = databaseReference.child("user_data").child(userUID).child("oradores").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                long oradorQuant = dataSnapshot.getChildrenCount();
-            }
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                oradoresList.clear();
+                for (DataSnapshot dados : dataSnapshot.getChildren()){
+                    Orador orador = dados.getValue(Orador.class);
+                    oradoresList.add(orador);
+                    Collections.sort(oradoresList);
+                }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+                adapter.notifyDataSetChanged();
+                //getSupportActionBar().setTitle(String.valueOf(oradoresList.size()));
             }
 
             @Override
@@ -235,4 +228,6 @@ public class CongregacoesFragment extends BaseFragment{
         menuHelper.setGravity(Gravity.END);
         menuHelper.show();
     }
+
+
 }

@@ -39,6 +39,7 @@ import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
 import com.qi0.weslley.gerenciadordediscursos.activitys.DetalheActivity;
 import com.qi0.weslley.gerenciadordediscursos.adapter.OradorAdaper;
 import com.qi0.weslley.gerenciadordediscursos.helper.RecyclerItemClickListener;
+import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 
 import java.util.ArrayList;
@@ -231,4 +232,5 @@ public class OradoresFragment extends BaseFragment {
         menuHelper.setGravity(Gravity.END);
         menuHelper.show();
     }
+
 }

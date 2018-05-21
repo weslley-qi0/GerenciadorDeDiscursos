@@ -270,7 +270,7 @@ public class AdicionarEditarActivity extends BaseActivity {
                         .setValue(congregacaoNova);
 
                 if (congregacaoelecionada != null){
-                    Toasty.success(AdicionarEditarActivity.this, "Congregação Editada", Toast.LENGTH_SHORT).show();
+                    Toasty.success(AdicionarEditarActivity.this, "Congregação Atualizada", Toast.LENGTH_SHORT).show();
                 }else {
                     Toasty.success(AdicionarEditarActivity.this, "Congregação Salva", Toast.LENGTH_SHORT).show();
                 }
@@ -410,7 +410,7 @@ public class AdicionarEditarActivity extends BaseActivity {
                         .setValue(discursoNovo);
 
                 if (discursoSelecionado != null){
-                    Toasty.success(AdicionarEditarActivity.this, "Discurso Editado", Toast.LENGTH_SHORT).show();
+                    Toasty.success(AdicionarEditarActivity.this, "Discurso Atualizado", Toast.LENGTH_SHORT).show();
                 }else {
                     Toasty.success(AdicionarEditarActivity.this, "Discurso Salvo", Toast.LENGTH_SHORT).show();
                 }

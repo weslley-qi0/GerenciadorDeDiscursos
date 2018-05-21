@@ -67,8 +67,15 @@ public class DetalheOradorFragment extends BaseFragment {
         detalheNomeOrador.setText(oradorSelecionado.getNome());
         ratingBarDetalheOrador.setRating(oradorSelecionado.getRatingOrador());
 
+        if (oradorSelecionado.getUrlFotoOrador() != null) {
+            Uri uri = Uri.parse(oradorSelecionado.getUrlFotoOrador());
+            Glide.with(getContext())
+                    .load(uri)
+                    .error(R.drawable.img_padrao)
+                    .into(fotoOradorDetalhe);
+        }
 
-        if (VerificaConeccao.isOnline(getActivity())) {
+        /*if (VerificaConeccao.isOnline(getActivity())) {
             if (oradorSelecionado.getUrlFotoOrador() != null) {
                 Uri uri = Uri.parse(oradorSelecionado.getUrlFotoOrador());
                 Glide.with(getContext())
@@ -83,7 +90,7 @@ public class DetalheOradorFragment extends BaseFragment {
                         .error(R.drawable.img_padrao)
                         .into(fotoOradorDetalhe);
             }
-        }
+        }*/
     }
 
     @Override

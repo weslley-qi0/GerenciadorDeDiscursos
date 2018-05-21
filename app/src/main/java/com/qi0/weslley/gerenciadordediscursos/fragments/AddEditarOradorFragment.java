@@ -3,12 +3,10 @@ package com.qi0.weslley.gerenciadordediscursos.fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.ContextWrapper;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,12 +16,15 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
@@ -45,23 +46,21 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
-import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
+import com.qi0.weslley.gerenciadordediscursos.adapter.CongregacaoAdapter;
 import com.qi0.weslley.gerenciadordediscursos.helper.Mask;
 import com.qi0.weslley.gerenciadordediscursos.helper.Permissao;
+import com.qi0.weslley.gerenciadordediscursos.helper.RecyclerItemClickListener;
 import com.qi0.weslley.gerenciadordediscursos.helper.VerificaConeccao;
 import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -97,12 +96,15 @@ public class AddEditarOradorFragment extends BaseFragment {
     Orador oradorSelecionado;
     byte[] dadosImagem;
     float ratingOrador = 3;
+    String idCongregacaoSelecionada;
     Congregacao congregacaoSelecionada;
     Congregacao congregacaoNova;
+    CongregacaoAdapter congregacaoAdapter;
     String idCongregacao;
     String nomeCongregacao;
     String cidadeCongregacao;
     List<Congregacao> congregacoesList = new ArrayList();
+    List<Orador> oradoresList = new ArrayList();
     ArrayList discursos = new ArrayList();
     String idOrador, userUID, urlFotoOrador, nomeOrador, congregacaoOrador, telefoneOrador, emailOrador;
 
@@ -155,16 +157,22 @@ public class AddEditarOradorFragment extends BaseFragment {
         tvRatingOrador = view.findViewById(R.id.tv_rating_orador);
 
         if (oradorSelecionado != null) {
-            congregacaoSelecionada = oradorSelecionado.getCongregacao();
+            idCongregacaoSelecionada = oradorSelecionado.getIdCongregacao();
             setValoresNoFormulario();
         }
 
         edtTelefone.addTextChangedListener(Mask.insert("(##)#####-####", edtTelefone));
+        edtCongregacao.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogoEscolherCongregacao();
+            }
+        });
         edtCongregacao.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    dialogSelecionarCongregacao();
+                    dialogoEscolherCongregacao();
                 } else {
                 }
             }
@@ -222,43 +230,93 @@ public class AddEditarOradorFragment extends BaseFragment {
         return view;
     }
 
-    private void dialogSelecionarCongregacao() {
+    private void pegarCongregacoesDoBanco() {
 
-        //userUID = firebaseAuth.getCurrentUser().getUid();
-        //pegarCongregacoesDoBanco();
+        valueEventListenerOradores = databaseReference.child("user_data").child(userUID).child("congregacoes").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                congregacoesList.clear();
+                for (DataSnapshot dados : dataSnapshot.getChildren()) {
+                    Congregacao congregacao = dados.getValue(Congregacao.class);
+                    congregacoesList.add(congregacao);
+                    Collections.sort(congregacoesList);
 
-        List<String> nomeCongregacoesList = new ArrayList<>();
-
-        for (Congregacao congregacao : congregacoesList) {
-            nomeCongregacoesList.add(congregacao.getNomeCongregacao());
-        }
-
-        final String[] nomeCongArray = nomeCongregacoesList.toArray(new String[nomeCongregacoesList.size()]);
-
-        AlertDialog.Builder alertbox = new AlertDialog.Builder(getContext());
-        alertbox.setTitle("Escolha uma Congregação")
-                .setItems(nomeCongArray, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int pos) {
-
-                        String nome = nomeCongArray[pos];
-                        edtCongregacao.setText(nome);
-                        congregacaoSelecionada = congregacoesList.get(pos);
+                    if (oradorSelecionado != null) {
+                        if (congregacao.getIdCongregacao().equals(oradorSelecionado.getIdCongregacao())) {
+                            congregacaoSelecionada = congregacao;
+                            //setValoresNoFormulario();
+                            edtCongregacao.setText(congregacaoSelecionada.getNomeCongregacao());
+                        }
                     }
-                }).setPositiveButton("Add Nova Congregação", new DialogInterface.OnClickListener() {
+                }
+
+                //adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void dialogoEscolherCongregacao() {
+        oradoresList = Orador.pegarOradoresDoBanco(userUID);
+
+        final AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getLayoutInflater();
+        final View dialogoView = inflater.inflate(R.layout.dialog_congregacao_list, null);
+        dialogo.setView(dialogoView);
+        dialogo.setCancelable(false);
+        dialogo.setTitle("Escolha uma Congregação");
+
+        RecyclerView recyclerViewDialogo = dialogoView.findViewById(R.id.lista_congregacao_dialogo_agenda);
+        LinearLayoutManager layoutManagerDialogo = new LinearLayoutManager(getActivity());
+        recyclerViewDialogo.setLayoutManager(layoutManagerDialogo);
+        //recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewDialogo.setHasFixedSize(true);
+
+        congregacaoAdapter = new CongregacaoAdapter(congregacoesList, oradoresList, getContext());
+
+        recyclerViewDialogo.setAdapter(congregacaoAdapter);
+
+        dialogo.setPositiveButton("Add Nova Congregação", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dialogoAddCongregacao();
+                dialogoAddNovaCongregacao();
+                dialog.dismiss();
             }
         });
 
-        alertbox.show();
+        final AlertDialog alertDialog = dialogo.create();
+        alertDialog.show();
+
+        recyclerViewDialogo.addOnItemTouchListener(new RecyclerItemClickListener(
+                getContext(), recyclerViewDialogo, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                congregacaoSelecionada = congregacoesList.get(position);
+                idCongregacaoSelecionada = congregacaoSelecionada.getIdCongregacao();
+                edtCongregacao.setText(congregacaoSelecionada.getNomeCongregacao());
+                alertDialog.dismiss();
+
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            }
+        }));
     }
 
     private void setValoresNoFormulario() {
 
-        Congregacao congregacao = oradorSelecionado.getCongregacao();
         edtNome.setText(oradorSelecionado.getNome());
-        edtCongregacao.setText(congregacao.getNomeCongregacao());
+        //edtCongregacao.setText(congregacaoSelecionada.getNomeCongregacao());
         edtTelefone.setText(oradorSelecionado.getTelefone());
         edtEmail.setText(oradorSelecionado.getEmail());
         ratingBarOrador.setRating(oradorSelecionado.getRatingOrador());
@@ -309,15 +367,6 @@ public class AddEditarOradorFragment extends BaseFragment {
             default:
                 tvRatingOrador.setText("Padrão");
         }
-    }
-
-    private void pegarFoto() {
-
-        Glide.with(getContext())
-                .load(oradorSelecionado.getUrlFotoOrador())
-                .asBitmap()
-                .into(target);
-
     }
 
     private void validarSalvarOrador() {
@@ -410,7 +459,7 @@ public class AddEditarOradorFragment extends BaseFragment {
                 }
 
             } else {
-                dialogSelecionarCongregacao();
+                dialogoEscolherCongregacao();
             }
         } else {
             Toasty.info(getContext(), "Adicione um Nome", Toast.LENGTH_SHORT).show();
@@ -423,7 +472,7 @@ public class AddEditarOradorFragment extends BaseFragment {
 
         oradorNovo.setId(idOrador);
         oradorNovo.setNome(nomeOrador);
-        oradorNovo.setCongregacao(congregacaoSelecionada);
+        oradorNovo.setIdCongregacao(idCongregacaoSelecionada);// Todo trocar por id da congregaçao
         oradorNovo.setTelefone(telefoneOrador);
         oradorNovo.setEmail(emailOrador);
         oradorNovo.setUltimaVisita("");
@@ -574,7 +623,7 @@ public class AddEditarOradorFragment extends BaseFragment {
     }
 
     @SuppressLint("CutPasteId")
-    public void dialogoAddCongregacao() {
+    public void dialogoAddNovaCongregacao() {
 
         final AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getLayoutInflater();
@@ -679,38 +728,17 @@ public class AddEditarOradorFragment extends BaseFragment {
                 Toasty.success(getContext(), "Congregação Salva", Toast.LENGTH_SHORT).show();
 
                 edtCongregacao.setText(congregacaoNova.getNomeCongregacao());
-                congregacaoSelecionada = congregacaoNova;
+                idCongregacaoSelecionada = congregacaoNova.getIdCongregacao();
 
             } else {
                 Toasty.info(getContext(), "Preencha todos os Campos!", Toast.LENGTH_SHORT).show();
                 //Toasty.info(AdicionarEditarActivity.this, "Digite o nome da Cidade!", Toast.LENGTH_SHORT).show();
-                //dialogoAddCongregacao();
+                //dialogoAddNovaCongregacao();
             }
         } else {
             Toasty.info(getContext(), "Preencha todos os Campos!", Toast.LENGTH_SHORT).show();
-            //dialogoAddCongregacao();
+            //dialogoAddNovaCongregacao();
         }
-    }
-
-    private void pegarCongregacoesDoBanco() {
-
-        valueEventListenerOradores = databaseReference.child("user_data").child(userUID).child("congregacoes").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                congregacoesList.clear();
-                for (DataSnapshot dados : dataSnapshot.getChildren()) {
-                    Congregacao congregacao = dados.getValue(Congregacao.class);
-                    congregacoesList.add(congregacao);
-                }
-
-                //adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
 
     private SimpleTarget target = new SimpleTarget<Bitmap>() {
@@ -725,14 +753,74 @@ public class AddEditarOradorFragment extends BaseFragment {
     };
 
     // ToDo Remover depois
+    private void pegarCongregacaoPeloID() {
+
+        databaseReference.child("user_data").child(userUID).child("congregacoes").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot dados : dataSnapshot.getChildren()) {
+                    Congregacao congregacao = dados.getValue(Congregacao.class);
+                    congregacoesList.add(congregacao);
+                    if (congregacao.getIdCongregacao().equals(oradorSelecionado.getIdCongregacao())){
+                        congregacaoSelecionada = congregacao;
+                        edtCongregacao.setText(congregacaoSelecionada.getNomeCongregacao());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private void pegarFoto() {
+
+        Glide.with(getContext())
+                .load(oradorSelecionado.getUrlFotoOrador())
+                .asBitmap()
+                .into(target);
+
+    }
+    private void dialogSelecionarCongregacao() {
+
+        //userUID = firebaseAuth.getCurrentUser().getUid();
+        //pegarCongregacoesDoBanco();
+
+        List<String> nomeCongregacoesList = new ArrayList<>();
+
+        for (Congregacao congregacao : congregacoesList) {
+            nomeCongregacoesList.add(congregacao.getNomeCongregacao());
+        }
+
+        final String[] nomeCongArray = nomeCongregacoesList.toArray(new String[nomeCongregacoesList.size()]);
+
+        AlertDialog.Builder alertbox = new AlertDialog.Builder(getContext());
+        alertbox.setTitle("Escolha uma Congregação")
+                .setItems(nomeCongArray, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int pos) {
+
+                        String nome = nomeCongArray[pos];
+                        edtCongregacao.setText(nome);
+                        Congregacao congregacao = congregacoesList.get(pos);
+                        idCongregacaoSelecionada = congregacao.getIdCongregacao();
+                    }
+                }).setPositiveButton("Add Nova Congregação", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialogoAddNovaCongregacao();
+            }
+        });
+
+        alertbox.show();
+    }
     private void setDatas() {
 
         for (int i = 0; i <= 11; i++) {
             pegarListaDataDoDomingos(i, 2018);
         }
     }
-
-    // ToDo Remover depois
     public void pegarListaDataDoDomingos(int mes, int ano) {
         userUID = firebaseAuth.getCurrentUser().getUid();
 
@@ -765,4 +853,5 @@ public class AddEditarOradorFragment extends BaseFragment {
             // enquanto o dia do mês atual for diferente de 1
         } while (c.get(Calendar.DAY_OF_MONTH) != 1);
     }
+
 }

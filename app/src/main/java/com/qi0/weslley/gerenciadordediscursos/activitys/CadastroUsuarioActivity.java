@@ -23,7 +23,13 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.database.DatabaseReference;
 import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
+import com.qi0.weslley.gerenciadordediscursos.model.Agenda;
 import com.qi0.weslley.gerenciadordediscursos.model.Usuario;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import es.dmoral.toasty.Toasty;
 
@@ -116,6 +122,7 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
     public void sendToMain (){
         Intent intentMainActivity = new Intent(CadastroUsuarioActivity.this, MainActivity.class);
         startActivity(intentMainActivity);
+        criarAgenda();
         finish();
     }
 
@@ -157,6 +164,50 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             }
         });
+    }
+
+    private void criarAgenda() {
+        Calendar calendar = Calendar.getInstance();
+        int ano = calendar.get(Calendar.YEAR);
+        for (int i = 0; i <= 11; i++) {
+            criarAgendaNoBanco(i, ano);
+        }
+    }
+
+    public void criarAgendaNoBanco(int mes, int ano) {
+        userUID = firebaseAuth.getCurrentUser().getUid();
+        Agenda agenda = new Agenda();
+
+        // cria um calendário na data 01/mes/ano
+        Calendar c = new GregorianCalendar(ano, mes, 1);
+        // Pega a Data e formata de Acordo com a Região Ex: 00/00/00
+        //DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
+        DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
+
+        do {
+            // o dia da semana ecolhido é domingo?
+            if (c.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+                SimpleDateFormat dataSDF = new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat mesSDF = new SimpleDateFormat("MM");
+                String dataFormatada = dataSDF.format(c.getTime());
+                String mesFormatado = mesSDF.format(c.getTime());
+
+                agenda.setData(dataFormatada);
+
+                databaseReference.child("user_data")
+                        .child(userUID)
+                        .child("agenda")
+                        .child(String.valueOf(ano))
+                        .child(mesFormatado)
+                        .child(dataFormatada)
+                        .setValue(agenda);
+
+            }
+            // incrementa um dia no calendário
+            c.roll(Calendar.DAY_OF_MONTH, true);
+
+            // enquanto o dia do mês atual for diferente de 1
+        } while (c.get(Calendar.DAY_OF_MONTH) != 1);
     }
 
     public void salvarUsuario(){
