@@ -1,6 +1,8 @@
 package com.qi0.weslley.gerenciadordediscursos.activitys;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,7 +20,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
-import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
+import com.qi0.weslley.gerenciadordediscursos.config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.fragments.AddEditarOradorFragment;
 import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
@@ -398,9 +400,11 @@ public class AdicionarEditarActivity extends BaseActivity {
         if (!numeroDiscurso.isEmpty()) {
             if (!temaDiscurso.isEmpty()) {
 
+                String numeroDiscursoFormatado = String.format("%03d", Integer.parseInt(numeroDiscurso));
+
                 discursoNovo = new Discurso();
                 discursoNovo.setIdDiscurso(idDisurso);
-                discursoNovo.setNumero(numeroDiscurso);
+                discursoNovo.setNumero(numeroDiscursoFormatado);
                 discursoNovo.setTema(temaDiscurso);
 
                 databaseReference.child("user_data")

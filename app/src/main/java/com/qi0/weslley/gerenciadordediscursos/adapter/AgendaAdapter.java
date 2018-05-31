@@ -81,10 +81,9 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHold
         holder.tvMes.setText(mesFormatado.toUpperCase());
         holder.tvAno.setText(anoFormatado);
 
-        holder.agendaCongregacao.setText(pegarNomeCongregacao(agenda));
+        holder.agendaCongregacao.setText("Congregação: " + pegarNomeCongregacao(agenda));
         holder.agendaOrador.setText(pegarNomeOrador(agenda));
-        holder.agendaDiscurso.setText(pegarTemaDiscurso(agenda));
-
+        holder.agendaDiscurso.setText("Tema: " + pegarTemaDiscurso(agenda));
     }
 
     @Override

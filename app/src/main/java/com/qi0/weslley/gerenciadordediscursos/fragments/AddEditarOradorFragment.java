@@ -3,7 +3,6 @@ package com.qi0.weslley.gerenciadordediscursos.fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -44,7 +43,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
+import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
+import com.qi0.weslley.gerenciadordediscursos.config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.adapter.CongregacaoAdapter;
 import com.qi0.weslley.gerenciadordediscursos.helper.Mask;
@@ -488,6 +488,12 @@ public class AddEditarOradorFragment extends BaseFragment {
 
         progressBar.setVisibility(View.GONE);
 
+        Intent devolve = new Intent();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("oradorSelecionado", oradorNovo);
+        devolve.putExtra("oradorSelecionado", bundle);
+        getActivity().setResult(RESULT_OK, devolve);
+
         if (oradorSelecionado == null) {
             Toasty.success(getContext(), "Orador Salvo", Toast.LENGTH_SHORT).show();
         } else {
@@ -622,7 +628,6 @@ public class AddEditarOradorFragment extends BaseFragment {
         });
     }
 
-    @SuppressLint("CutPasteId")
     public void dialogoAddNovaCongregacao() {
 
         final AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
@@ -651,7 +656,6 @@ public class AddEditarOradorFragment extends BaseFragment {
                 dialog.dismiss();
             }
         });
-
 
         final AlertDialog alertDialog = dialogo.create();
 

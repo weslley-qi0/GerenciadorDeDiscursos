@@ -13,7 +13,6 @@ import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -33,7 +32,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
-import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
+import com.qi0.weslley.gerenciadordediscursos.config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
 import com.qi0.weslley.gerenciadordediscursos.activitys.DetalheActivity;
@@ -44,6 +43,7 @@ import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import es.dmoral.toasty.Toasty;
 
@@ -59,6 +59,7 @@ public class OradoresFragment extends BaseFragment {
     Orador oradorSelecionado;
 
     ArrayList oradoresList = new ArrayList();
+    ArrayList congregacaoList = new ArrayList();
 
     DatabaseReference databaseReference;
     FirebaseAuth firebaseAuth;
@@ -91,7 +92,7 @@ public class OradoresFragment extends BaseFragment {
         //recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
 
-        adapter = new OradorAdaper(oradoresList, getContext());
+        adapter = new OradorAdaper(oradoresList, congregacaoList, getContext());
 
         recyclerView.setAdapter(adapter);
 
@@ -143,7 +144,14 @@ public class OradoresFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
+        pegarCongegacoesDoBanco();
         pegarOradores();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        databaseReference.removeEventListener(valueEventListenerOradores);
     }
 
     private void runLayoutAnimation(final RecyclerView recyclerView) {
@@ -158,7 +166,10 @@ public class OradoresFragment extends BaseFragment {
 
     private void pegarOradores() {
 
-        valueEventListenerOradores = databaseReference.child("user_data").child(userUID).child("oradores").addValueEventListener(new ValueEventListener() {
+        valueEventListenerOradores = databaseReference.child("user_data")
+                             .child(userUID)
+                             .child("oradores")
+                             .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 oradoresList.clear();
@@ -177,6 +188,32 @@ public class OradoresFragment extends BaseFragment {
 
             }
         });
+    }
+
+    public void pegarCongegacoesDoBanco(){
+
+        DatabaseReference databaseReference;
+        databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
+
+        databaseReference.child("user_data").child(userUID).child("congregacoes").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                congregacaoList.clear();
+                for (DataSnapshot dados : dataSnapshot.getChildren()){
+                    Congregacao congregacao = dados.getValue(Congregacao.class);
+                    congregacaoList.add(congregacao);
+                    Collections.sort(congregacaoList);
+                }
+
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     private void deleteImagePerfilOrador() {

@@ -29,12 +29,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
+import com.qi0.weslley.gerenciadordediscursos.config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
 import com.qi0.weslley.gerenciadordediscursos.adapter.DiscursoAdapter;
 import com.qi0.weslley.gerenciadordediscursos.helper.RecyclerItemClickListener;
-import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
 import com.qi0.weslley.gerenciadordediscursos.model.Discurso;
 
 import java.util.ArrayList;

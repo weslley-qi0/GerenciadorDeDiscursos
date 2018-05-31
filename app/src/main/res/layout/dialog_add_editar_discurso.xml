@@ -54,7 +54,7 @@
                         android:layout_marginBottom="3dp"
                         android:background="@drawable/background_edittext"
                         android:hint="Tema"
-                        android:inputType="textCapSentences"
+                        android:inputType="textCapSentences|textLongMessage"
                         android:padding="8dp"
                         android:translationY="3dp" />
 

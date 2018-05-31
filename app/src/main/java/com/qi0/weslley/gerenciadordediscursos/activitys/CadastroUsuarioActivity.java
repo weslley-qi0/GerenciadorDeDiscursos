@@ -21,7 +21,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.database.DatabaseReference;
-import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
+import com.qi0.weslley.gerenciadordediscursos.config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.model.Agenda;
 import com.qi0.weslley.gerenciadordediscursos.model.Usuario;
@@ -193,6 +193,9 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
                 String mesFormatado = mesSDF.format(c.getTime());
 
                 agenda.setData(dataFormatada);
+                agenda.setIdCongregacao("");
+                agenda.setIdOrador("");
+                agenda.setIdDiscurso("");
 
                 databaseReference.child("user_data")
                         .child(userUID)

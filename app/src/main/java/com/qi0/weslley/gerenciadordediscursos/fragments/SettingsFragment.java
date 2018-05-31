@@ -8,13 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
-import com.qi0.weslley.gerenciadordediscursos.Config.ConfiguracaoFirebase;
+import com.qi0.weslley.gerenciadordediscursos.config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.activitys.LoginActivity;
 import com.qi0.weslley.gerenciadordediscursos.model.Agenda;
@@ -102,6 +99,9 @@ public class SettingsFragment extends BaseFragment {
                 String mesFormatado = mesSDF.format(c.getTime());
 
                 agenda.setData(dataFormatada);
+                agenda.setIdCongregacao("");
+                agenda.setIdOrador("");
+                agenda.setIdDiscurso("");
 
                 databaseReference.child("user_data")
                         .child(userUID)

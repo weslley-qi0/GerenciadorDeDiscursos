@@ -32,10 +32,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class OradorAdaper extends RecyclerView.Adapter<OradorAdaper.MyViewHolder> {
 
     private List<Orador> oradores;
+    List<Congregacao> congregacoes;
     private Context context;
 
-    public OradorAdaper(List<Orador> oradores, Context context) {
+    public OradorAdaper(List<Orador> oradores, List<Congregacao> congregacoes, Context context) {
         this.oradores = oradores;
+        this.congregacoes = congregacoes;
         this.context = context;
     }
 
@@ -53,7 +55,7 @@ public class OradorAdaper extends RecyclerView.Adapter<OradorAdaper.MyViewHolder
     public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
         Orador orador = oradores.get( position );
         holder.nomeOrador.setText( orador.getNome() );
-        holder.congregacao.setText( "" );
+        holder.congregacao.setText( pegarNomeDaCongregacao(orador.getIdCongregacao()) );
         holder.ultimaVisita.setText( orador.getUltimaVisita() );
 
         if( orador.getUrlFotoOrador() != null ){
@@ -89,34 +91,17 @@ public class OradorAdaper extends RecyclerView.Adapter<OradorAdaper.MyViewHolder
 
     }
 
-    /*private void pegarCongregacoesDoBanco() {
+    private String pegarNomeDaCongregacao(String idCongregacao){
+        String nomeDaCongregacao = "";
 
-        valueEventListenerOradores = databaseReference.child("user_data").child(userUID).child("congregacoes").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                congregacoesList.clear();
-                for (DataSnapshot dados : dataSnapshot.getChildren()) {
-                    Congregacao congregacao = dados.getValue(Congregacao.class);
-                    congregacoesList.add(congregacao);
-
-                    if (oradorSelecionado != null) {
-                        idCongregacaoSelecionada = oradorSelecionado.getIdCongregacao();
-                        if (congregacao.getIdCongregacao().equals(oradorSelecionado.getIdCongregacao())) {
-                            congregacaoSelecionada = congregacao;
-                            setValoresNoFormulario();
-                            //edtCongregacao.setText(congregacaoSelecionada.getNomeCongregacao());
-                        }
-                    }
+        for (Congregacao congregacao : congregacoes){
+            if (congregacao.getIdCongregacao() != null){
+                if (congregacao.getIdCongregacao().equals(idCongregacao)){
+                    nomeDaCongregacao = congregacao.getNomeCongregacao();
                 }
-
-                //adapter.notifyDataSetChanged();
             }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }*/
-
+        }
+        return nomeDaCongregacao;
+    }
 }

@@ -1,4 +1,4 @@
-package com.qi0.weslley.gerenciadordediscursos.Config;
+package com.qi0.weslley.gerenciadordediscursos.config;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
