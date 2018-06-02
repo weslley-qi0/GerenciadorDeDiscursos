@@ -11,7 +11,9 @@ import com.qi0.weslley.gerenciadordediscursos.config.ConfiguracaoFirebase;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Orador implements Serializable, Comparable<Orador>{
 
@@ -21,26 +23,27 @@ public class Orador implements Serializable, Comparable<Orador>{
     private String telefone;
     private String email;
     private String ultimaVisita;
-    private String caminhoInternoFoto;
     private String urlFotoOrador;
-    private List<Discurso> discursoListOrador;
+    //private List<Proferimento> proferimentos;
+    //private Strking proferimentos;
+    public Map<String, Object> proferimentos = new HashMap<>();
     private float ratingOrador;
 
     public Orador() {
     }
 
-    public Orador(String id, String nome, String idCongregacao, String telefone, String email, String ultimaVisita, String caminhoInternoFoto, String urlFotoOrador, List<Discurso> discursoListOrador, float ratingOrador) {
+    public Orador(String id, String nome, String idCongregacao, String telefone, String email, String ultimaVisita, String urlFotoOrador, Map<String, Object> proferimentos, float ratingOrador) {
         this.id = id;
         this.nome = nome;
         this.idCongregacao = idCongregacao;
         this.telefone = telefone;
         this.email = email;
         this.ultimaVisita = ultimaVisita;
-        this.caminhoInternoFoto = caminhoInternoFoto;
         this.urlFotoOrador = urlFotoOrador;
-        this.discursoListOrador = discursoListOrador;
+        this.proferimentos = proferimentos;
         this.ratingOrador = ratingOrador;
     }
+
     // Pega Todos os oradores e seta no adapter para poder pegar a quantidade
     public static List<Orador> pegarOradoresDoBanco(String userUID){
 
@@ -124,12 +127,12 @@ public class Orador implements Serializable, Comparable<Orador>{
         this.urlFotoOrador = urlFotoOrador;
     }
 
-    public List<Discurso> getDiscursoListOrador() {
-        return discursoListOrador;
+    public Map<String, Object> getProferimentos() {
+        return proferimentos;
     }
 
-    public void setDiscursoListOrador(List<Discurso> discursoListOrador) {
-        this.discursoListOrador = discursoListOrador;
+    public void setProferimentos(Map<String, Object> proferimentos) {
+        this.proferimentos = proferimentos;
     }
 
     public float getRatingOrador() {

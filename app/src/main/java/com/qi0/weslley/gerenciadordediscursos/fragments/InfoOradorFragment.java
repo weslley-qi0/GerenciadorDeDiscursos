@@ -2,26 +2,32 @@ package com.qi0.weslley.gerenciadordediscursos.fragments;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.qi0.weslley.gerenciadordediscursos.R;
+import com.qi0.weslley.gerenciadordediscursos.config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
+import com.qi0.weslley.gerenciadordediscursos.model.Discurso;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class InfoOradorFragment extends BaseFragment {
 
-
     public InfoOradorFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,7 +50,7 @@ public class InfoOradorFragment extends BaseFragment {
         //tvCardCongregacao.setText(congregacao.getNomeCongregacao()); //Todo Concertar
         tvCardTelefone.setText(oradorSelecionado.getTelefone());
         tvCardEmail.setText(oradorSelecionado.getEmail());
-        //tvCardNumerosFeitos.setText(oradorSelecionado.getNome());
+        //tvCardNumerosFeitos.setText(discursosList.size());
         //tvCardNumerosCancelados.setText(oradorSelecionado.getNome());
         //tvCardNumerosAlterados.setText(oradorSelecionado.getNome());
 

@@ -2,7 +2,6 @@ package com.qi0.weslley.gerenciadordediscursos.fragments;
 
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -43,7 +42,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
 import com.qi0.weslley.gerenciadordediscursos.config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.adapter.CongregacaoAdapter;
@@ -53,6 +51,7 @@ import com.qi0.weslley.gerenciadordediscursos.helper.RecyclerItemClickListener;
 import com.qi0.weslley.gerenciadordediscursos.helper.VerificaConeccao;
 import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
+import com.qi0.weslley.gerenciadordediscursos.model.Proferimento;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -477,7 +476,7 @@ public class AddEditarOradorFragment extends BaseFragment {
         oradorNovo.setEmail(emailOrador);
         oradorNovo.setUltimaVisita("");
         oradorNovo.setUrlFotoOrador(urlFotoOrador);
-        oradorNovo.setDiscursoListOrador(discursos);
+        //oradorNovo.setProferimentos();
         oradorNovo.setRatingOrador(ratingOrador);
 
         databaseReference.child("user_data")
@@ -857,5 +856,4 @@ public class AddEditarOradorFragment extends BaseFragment {
             // enquanto o dia do mês atual for diferente de 1
         } while (c.get(Calendar.DAY_OF_MONTH) != 1);
     }
-
 }

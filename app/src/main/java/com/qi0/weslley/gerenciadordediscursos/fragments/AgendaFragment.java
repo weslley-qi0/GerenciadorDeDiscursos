@@ -55,11 +55,12 @@ public class AgendaFragment extends BaseFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        int currentMes = Calendar.MONTH + 1;
+        Calendar calendar = Calendar.getInstance();
+        int currentMes = calendar.get(Calendar.MONTH);
 
         setupViewPager(viewPager);
         viewPagerTab.setViewPager(viewPager);
-        viewPager.setCurrentItem(currentMes + 1);
+        viewPager.setCurrentItem(currentMes);
 
     }
 
