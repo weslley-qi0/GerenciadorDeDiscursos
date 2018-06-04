@@ -67,6 +67,7 @@ public class MessesFragment extends BaseFragment {
     String numeroDiscurso;
     String temaDiscurso;
     String idProferimento;
+    String idProferimentoAntigo;
 
     Agenda agendaSelecionada;
     List<Agenda> agendaList = new ArrayList();
@@ -82,6 +83,7 @@ public class MessesFragment extends BaseFragment {
 
     String idCongregacaoEscolhida;
     String idOradorEscolhido;
+    String idOradorAntigo;
     String idDiscursoEscolhido;
 
     Congregacao congregacaoEscolhida;
@@ -130,6 +132,8 @@ public class MessesFragment extends BaseFragment {
             @Override
             public void onItemClick(View view, int position) {
                 agendaSelecionada = agendaList.get(position);
+                idProferimento = agendaSelecionada.getIdProferimento();
+                idOradorEscolhido = agendaSelecionada.getIdOrador();
                 dialogoEdtitarAgenda();
             }
 
@@ -199,8 +203,6 @@ public class MessesFragment extends BaseFragment {
     }
 
     private void dialogoEdtitarAgenda() {
-
-        idProferimento = null;
 
         SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy");
         Date data = null;
@@ -353,7 +355,7 @@ public class MessesFragment extends BaseFragment {
         recyclerViewDialogo.setLayoutManager(layoutManagerDialogo);
         recyclerViewDialogo.setHasFixedSize(true);
 
-        if (oradoresList.size() <= 0){
+        if (oradoresList.size() <= 0) {
             dialogo.setTitle("Não há Oradores Cadastrados Nessa Congregação!");
         }
 
@@ -386,9 +388,6 @@ public class MessesFragment extends BaseFragment {
                 edtOrador.setText(oradorEscolhido.getNome());
                 pegaNomeDaCongregacao(oradorEscolhido.getIdCongregacao());
 
-                if (oradorEscolhido.getProferimentos() != null){
-                    //proferimentoList = Orador.pegarProferimentos(userUID, idOradorEscolhido);
-                }
                 alertDialog.dismiss();
             }
 
@@ -705,16 +704,18 @@ public class MessesFragment extends BaseFragment {
 
     private void salvarAgenda() {
 
-        if (idProferimento == null){
-            if (idOradorEscolhido != null){
-                idProferimento = databaseReference.child("user_data")
-                        .child(userUID)
-                        .child("oradores")
-                        .child(idOradorEscolhido)
-                        .child("proferimentos")
-                        .push().getKey();
+        atualizarProferimento();
 
-            }
+        if (idProferimento == null || idProferimento.equals("")) {
+                if (idOradorEscolhido != null) {
+                    idProferimento = databaseReference.child("user_data")
+                            .child(userUID)
+                            .child("oradores")
+                            .child(idOradorEscolhido)
+                            .child("proferimentos")
+                            .push().getKey();
+
+                }
         }
 
         SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy");
@@ -750,8 +751,8 @@ public class MessesFragment extends BaseFragment {
                 .setValue(agenda);
 
 
-        if (idDiscursoEscolhido != null){
-            if (!idDiscursoEscolhido.equals("")){
+        if (idDiscursoEscolhido != null) {
+            if (!idDiscursoEscolhido.equals("")) {
                 databaseReference.child("user_data")
                         .child(userUID)
                         .child("discursos")
@@ -762,8 +763,8 @@ public class MessesFragment extends BaseFragment {
         }
 
         //Todo criar um model Proferimentos e uma list de Proferimentos setar no orador um proferimento
-        if (idOradorEscolhido != null){
-            if (!idOradorEscolhido.equals("")){
+        if (idOradorEscolhido != null) {
+            if (!idOradorEscolhido.equals("")) {
                 Proferimento proferimento = new Proferimento();
                 proferimento.setIdProferimentos(idProferimento);
                 proferimento.setDataProferimento(dataFormatada);
@@ -796,6 +797,8 @@ public class MessesFragment extends BaseFragment {
         idOradorEscolhido = null;
         idDiscursoEscolhido = null;
         idProferimento = null;
+        idOradorAntigo = null;
+        idProferimentoAntigo = null;
     }
 
     private void limparAgendaSelecionada() {
@@ -831,8 +834,8 @@ public class MessesFragment extends BaseFragment {
                 .child(dataFormatada)
                 .setValue(agenda);
 
-        if (idOradorEscolhido != null){
-            if (idProferimento != null){
+        if (idOradorEscolhido != null) {
+            if (idProferimento != null) {
                 databaseReference.child("user_data")
                         .child(userUID)
                         .child("oradores")
@@ -870,6 +873,7 @@ public class MessesFragment extends BaseFragment {
             if (orador.getId().equals(agendaSelecionada.getIdOrador())) {
                 oradorEscolhido = orador;
                 idOradorEscolhido = orador.getId();
+                idOradorAntigo = orador.getId();
                 String nomeOrador = orador.getNome();
                 edtOrador.setText(nomeOrador);
                 pegarProferimentosDoBanco();
@@ -885,9 +889,10 @@ public class MessesFragment extends BaseFragment {
             }
         }
 
-        for (Proferimento proferimento : proferimentoList){
-            if (agendaSelecionada.getData().equals(proferimento.getDataProferimento())){
+        for (Proferimento proferimento : proferimentoList) {
+            if (agendaSelecionada.getData().equals(proferimento.getDataProferimento())) {
                 idProferimento = proferimento.getIdProferimentos();
+                idProferimentoAntigo = proferimento.getIdProferimentos();
             }
         }
     }
@@ -920,7 +925,7 @@ public class MessesFragment extends BaseFragment {
         }
     }
 
-    private void pegaNomeDaCongregacao(String idCongregacaoOradorClicado){
+    private void pegaNomeDaCongregacao(String idCongregacaoOradorClicado) {
         for (Congregacao congregacao : congregacaoList) {
             if (congregacao.getIdCongregacao().equals(idCongregacaoOradorClicado)) {
                 congregacaoEscolhida = congregacao;
@@ -931,7 +936,7 @@ public class MessesFragment extends BaseFragment {
         }
     }
 
-    private void pegarProferimentosDoBanco(){
+    private void pegarProferimentosDoBanco() {
 
         //final List<Proferimento> proferimentoList = new ArrayList<>();
 
@@ -945,7 +950,7 @@ public class MessesFragment extends BaseFragment {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         proferimentoList.clear();
 
-                        for (DataSnapshot dados : dataSnapshot.getChildren()){
+                        for (DataSnapshot dados : dataSnapshot.getChildren()) {
                             String idProferimento = dados.getValue(String.class);
                             idProferimentoList.add(idProferimento);
                         }
@@ -956,6 +961,38 @@ public class MessesFragment extends BaseFragment {
 
                     }
                 });
+    }
+
+    private void atualizarProferimento() {
+
+        if (idOradorEscolhido != null) {  //Update
+            if (idProferimento != null) {
+                if (!idProferimento.equals("")) {
+                    if (idOradorAntigo != null) {
+                        databaseReference.child("user_data")
+                                .child(userUID)
+                                .child("oradores")
+                                .child(idOradorAntigo)
+                                .child("proferimentos")
+                                .child(idProferimento)
+                                .removeValue();
+
+                        databaseReference.child("user_data")
+                                .child(userUID)
+                                .child("proferimentos")
+                                .child(idProferimento)
+                                .removeValue();
+                    }
+                }
+                /*databaseReference.child("user_data")
+                        .child(userUID)
+                        .child("oradores")
+                        .child(idOradorEscolhido)
+                        .child("proferimentos")
+                        .child(idProferimento)
+                        .removeValue();*/
+            }
+        }
     }
 
     @SuppressLint("RestrictedApi")

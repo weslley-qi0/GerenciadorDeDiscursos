@@ -33,7 +33,7 @@ import java.util.GregorianCalendar;
 
 import es.dmoral.toasty.Toasty;
 
-public class CadastroUsuarioActivity extends AppCompatActivity {
+public class CadastroUsuarioActivity extends BaseActivity {
 
     FrameLayout frameLayoutProgressBar;
     ProgressBar progressBar;

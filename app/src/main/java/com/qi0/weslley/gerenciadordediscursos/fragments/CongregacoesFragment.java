@@ -3,10 +3,12 @@ package com.qi0.weslley.gerenciadordediscursos.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,6 +30,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.qi0.weslley.gerenciadordediscursos.adapter.OradorAdaper;
 import com.qi0.weslley.gerenciadordediscursos.config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
@@ -48,10 +51,14 @@ public class CongregacoesFragment extends BaseFragment{
 
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
+    OradorAdaper oradorAdaper;
     CongregacaoAdapter adapter;
     Congregacao congregacaoSelecionada;
+    ArrayList<Orador> oradoresDaCongregacaoClicada = new ArrayList<>();
     ArrayList congregacoesList = new ArrayList();
-    ArrayList oradoresList = new ArrayList();
+    ArrayList<Orador> oradoresList = new ArrayList();
+
+    String idCongregacaoEscolhida;
 
     DatabaseReference databaseReference;
     FirebaseAuth firebaseAuth;
@@ -111,7 +118,9 @@ public class CongregacoesFragment extends BaseFragment{
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-
+                Congregacao congregacaoEscolhida = (Congregacao) congregacoesList.get(position);
+                idCongregacaoEscolhida = congregacaoEscolhida.getIdCongregacao();
+                dialogoExibirOradoesPorCongregacao();
             }
 
             @Override
@@ -197,6 +206,80 @@ public class CongregacoesFragment extends BaseFragment{
         });
     }
 
+    private void dialogoExibirOradoesPorCongregacao() {
+
+        AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogoView = inflater.inflate(R.layout.dialog_oradores_list, null);
+        dialogo.setView(dialogoView);
+        dialogo.setCancelable(true);
+        dialogo.setTitle("Oradores");
+
+        RecyclerView recyclerViewDialogo = dialogoView.findViewById(R.id.lista_oradores_dialogo_agenda);
+        LinearLayoutManager layoutManagerDialogo = new LinearLayoutManager(getActivity());
+        recyclerViewDialogo.setLayoutManager(layoutManagerDialogo);
+        recyclerViewDialogo.setHasFixedSize(true);
+
+        oradorAdaper = new OradorAdaper(oradoresList, congregacoesList, getContext());
+
+        recyclerViewDialogo.setAdapter(oradorAdaper);
+
+        dialogo.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                pegarQuantidadeOradores();
+            }
+        });
+
+        dialogo.setPositiveButton("Add Novo Orador", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(getActivity(), AdicionarEditarActivity.class);
+                intent.putExtra("qualFragmentAbrir", "AddOradorFragment");
+                startActivityForResult(intent, 1);
+                dialog.dismiss();
+            }
+        });
+
+        listarOradoesPorCongregacao(idCongregacaoEscolhida);
+        if (oradoresDaCongregacaoClicada.size() <= 0) {
+            dialogo.setTitle("Não há Oradores Cadastrados Nessa Congregação!");
+        }
+
+        final AlertDialog alertDialog = dialogo.create();
+
+        recyclerViewDialogo.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), recyclerViewDialogo, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                alertDialog.dismiss();
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            }
+        }));
+
+        alertDialog.show();
+    }
+
+    private void listarOradoesPorCongregacao(String idCongregacaoClicada) {
+        oradoresDaCongregacaoClicada.clear();
+        if (idCongregacaoClicada != null) {
+            for (Orador orador : oradoresList) {
+                if (orador.getIdCongregacao().equals(idCongregacaoClicada)) {
+                    oradoresDaCongregacaoClicada.add(orador);
+                }
+            }
+            oradoresList.clear();
+            oradoresList.addAll(oradoresDaCongregacaoClicada);
+        }
+    }
+
     @SuppressLint("RestrictedApi")
     public void showPopup(View v) {
         PopupMenu popup = new PopupMenu(getContext(), v);
@@ -226,6 +309,4 @@ public class CongregacoesFragment extends BaseFragment{
         menuHelper.setGravity(Gravity.END);
         menuHelper.show();
     }
-
-
 }

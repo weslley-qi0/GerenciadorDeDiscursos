@@ -25,7 +25,7 @@ import com.qi0.weslley.gerenciadordediscursos.model.Usuario;
 
 import es.dmoral.toasty.Toasty;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
     FrameLayout frameLayoutProgressBar;
     ProgressBar progressBar;
