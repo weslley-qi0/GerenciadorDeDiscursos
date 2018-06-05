@@ -58,7 +58,7 @@ public class CongregacoesFragment extends BaseFragment{
     ArrayList congregacoesList = new ArrayList();
     ArrayList<Orador> oradoresList = new ArrayList();
 
-    String idCongregacaoEscolhida;
+    String idCongregacaoSelecionada;
 
     DatabaseReference databaseReference;
     FirebaseAuth firebaseAuth;
@@ -118,8 +118,8 @@ public class CongregacoesFragment extends BaseFragment{
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Congregacao congregacaoEscolhida = (Congregacao) congregacoesList.get(position);
-                idCongregacaoEscolhida = congregacaoEscolhida.getIdCongregacao();
+                congregacaoSelecionada = (Congregacao) congregacoesList.get(position);
+                idCongregacaoSelecionada = congregacaoSelecionada.getIdCongregacao();
                 dialogoExibirOradoesPorCongregacao();
             }
 
@@ -236,12 +236,13 @@ public class CongregacoesFragment extends BaseFragment{
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(getActivity(), AdicionarEditarActivity.class);
                 intent.putExtra("qualFragmentAbrir", "AddOradorFragment");
+                intent.putExtra("congregacaoSelecionada", congregacaoSelecionada );
                 startActivityForResult(intent, 1);
                 dialog.dismiss();
             }
         });
 
-        listarOradoesPorCongregacao(idCongregacaoEscolhida);
+        listarOradoesPorCongregacao(idCongregacaoSelecionada);
         if (oradoresDaCongregacaoClicada.size() <= 0) {
             dialogo.setTitle("Não há Oradores Cadastrados Nessa Congregação!");
         }
@@ -292,7 +293,7 @@ public class CongregacoesFragment extends BaseFragment{
                     case R.id.item_editar:
                         Intent intentEditarCongregacao = new Intent(getActivity(), AdicionarEditarActivity.class);
                         intentEditarCongregacao.putExtra("qualFragmentAbrir", "AddCongregacaoFragment");
-                        intentEditarCongregacao.putExtra("congregacaoelecionada", congregacaoSelecionada);
+                        intentEditarCongregacao.putExtra("congregacaoSelecionada", congregacaoSelecionada);
                         startActivity(intentEditarCongregacao);
                         return true;
                     case R.id.item_deletar:

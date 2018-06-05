@@ -3,6 +3,8 @@ package com.qi0.weslley.gerenciadordediscursos.fragments;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -16,9 +18,11 @@ import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -142,6 +146,7 @@ public class MessesFragment extends BaseFragment {
                 agendaSelecionada = agendaList.get(position);
                 idProferimento = agendaSelecionada.getIdProferimento();
                 idOradorEscolhido = agendaSelecionada.getIdOrador();
+
                 showPopup(view);
             }
 
@@ -202,6 +207,7 @@ public class MessesFragment extends BaseFragment {
 
     }
 
+    @SuppressLint("ResourceAsColor")
     private void dialogoEdtitarAgenda() {
 
         SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy");
@@ -214,11 +220,11 @@ public class MessesFragment extends BaseFragment {
         SimpleDateFormat dataFormatada = new SimpleDateFormat("dd/MM/yyyy");
         String dataSelecionada = dataFormatada.format(data);
 
-        AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+        final AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getLayoutInflater();
         View dialogoView = inflater.inflate(R.layout.dialog_add_editar_agenda, null);
         dialogo.setView(dialogoView);
-        dialogo.setCancelable(false);
+        dialogo.setCancelable(true);
         dialogo.setTitle(dataSelecionada);
 
         edtCongregacao = dialogoView.findViewById(R.id.edt_dialog_agenda_congregacao);
@@ -228,7 +234,17 @@ public class MessesFragment extends BaseFragment {
         if (agendaSelecionada != null) {
             pegarValoresAgendaSelecionada();
             listarOradoesPorCongregacao(idCongregacaoEscolhida);
+
+            if (idOradorAntigo != null || idCongregacaoEscolhida!= null || idDiscursoEscolhido != null){
+                dialogo.setNeutralButton("EXCLUIR", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    limparAgendaSelecionada();
+                    }
+                });
+            }
         }
+
 
         edtCongregacao.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -250,6 +266,7 @@ public class MessesFragment extends BaseFragment {
                 dialogoEscolherDiscurso();
             }
         });
+
 
         dialogo.setPositiveButton("Salvar", new DialogInterface.OnClickListener() {
             @Override
@@ -279,6 +296,12 @@ public class MessesFragment extends BaseFragment {
 
         oradoresList = Orador.pegarOradoresDoBanco(userUID);
         //alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        b.setTextColor(getResources().getColor(R.color.green_500));
+        Button bC = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        bC.setTextColor(Color.GRAY);
+        Button bN = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        bN.setTextColor(Color.RED);
     }
 
     private void dialogoEscolherCongregacao() {
@@ -303,7 +326,6 @@ public class MessesFragment extends BaseFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialogoAddNovaCongregacao();
-                //AdicionarEditarActivity.dialogoAddCongregacaoStatic(getContext(), getActivity());
                 dialog.dismiss();
             }
         }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -322,6 +344,7 @@ public class MessesFragment extends BaseFragment {
                 congregacaoEscolhida = congregacaoList.get(position);
                 idCongregacaoEscolhida = congregacaoEscolhida.getIdCongregacao();
                 edtCongregacao.setText(congregacaoEscolhida.getNomeCongregacao());
+                idOradorEscolhido = null;
                 alertDialog.dismiss();
                 listarOradoesPorCongregacao(idCongregacaoEscolhida);
                 dialogoEscolherOrador();
@@ -338,6 +361,7 @@ public class MessesFragment extends BaseFragment {
         }));
 
         alertDialog.show();
+
         oradoresList = Orador.pegarOradoresDoBanco(userUID);
     }
 
@@ -347,7 +371,7 @@ public class MessesFragment extends BaseFragment {
         LayoutInflater inflater = getLayoutInflater();
         View dialogoView = inflater.inflate(R.layout.dialog_oradores_list, null);
         dialogo.setView(dialogoView);
-        dialogo.setCancelable(false);
+        dialogo.setCancelable(true);
         dialogo.setTitle("Escolha um Orador");
 
         RecyclerView recyclerViewDialogo = dialogoView.findViewById(R.id.lista_oradores_dialogo_agenda);
@@ -368,13 +392,21 @@ public class MessesFragment extends BaseFragment {
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(getActivity(), AdicionarEditarActivity.class);
                 intent.putExtra("qualFragmentAbrir", "AddOradorFragment");
+                intent.putExtra("congregacaoSelecionada", congregacaoEscolhida );
                 startActivityForResult(intent, 1);
                 dialog.dismiss();
             }
         }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
+
+                if (idOradorEscolhido == null){
+                    edtOrador.setText("");
+                    atualizarProferimento();
+                    oradorEscolhido = null;
+                    idOradorEscolhido = null;
+                    dialog.dismiss();
+                }
             }
         });
 
@@ -387,7 +419,6 @@ public class MessesFragment extends BaseFragment {
                 idOradorEscolhido = oradorEscolhido.getId();
                 edtOrador.setText(oradorEscolhido.getNome());
                 pegaNomeDaCongregacao(oradorEscolhido.getIdCongregacao());
-
                 alertDialog.dismiss();
             }
 
@@ -856,6 +887,7 @@ public class MessesFragment extends BaseFragment {
         idOradorEscolhido = null;
         idDiscursoEscolhido = null;
         idProferimento = null;
+        idOradorAntigo = null;
     }
 
     private void pegarValoresAgendaSelecionada() {
@@ -869,15 +901,22 @@ public class MessesFragment extends BaseFragment {
             }
         }
 
-        for (Orador orador : oradoresList) {
-            if (orador.getId().equals(agendaSelecionada.getIdOrador())) {
-                oradorEscolhido = orador;
-                idOradorEscolhido = orador.getId();
-                idOradorAntigo = orador.getId();
-                String nomeOrador = orador.getNome();
-                edtOrador.setText(nomeOrador);
-                pegarProferimentosDoBanco();
+        if (oradoresList.size() > 0){
+            for (Orador orador : oradoresList) {
+                if (orador.getId().equals(agendaSelecionada.getIdOrador())) {
+                    oradorEscolhido = orador;
+                    idOradorEscolhido = orador.getId();
+                    idOradorAntigo = orador.getId();
+                    String nomeOrador = orador.getNome();
+                    edtOrador.setText(nomeOrador);
+                    pegarProferimentosDoBanco();
+                    break;
+                }else{
+                    idOradorEscolhido = null;
+                }
             }
+        }else {
+            idOradorEscolhido = null;
         }
 
         for (Discurso discurso : discursosList) {

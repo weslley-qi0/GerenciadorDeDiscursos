@@ -1,11 +1,10 @@
 package com.qi0.weslley.gerenciadordediscursos.activitys;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +14,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -38,7 +38,7 @@ public class AdicionarEditarActivity extends BaseActivity {
 
     Orador oradorSelecionado;
     Congregacao congregacaoNova;
-    Congregacao congregacaoelecionada;
+    Congregacao congregacaoSelecionada;
     Discurso discursoNovo;
     Discurso discursoSelecionado;
     String userUID;
@@ -71,7 +71,7 @@ public class AdicionarEditarActivity extends BaseActivity {
 
         Intent intent = getIntent();
         oradorSelecionado = (Orador) intent.getSerializableExtra("oradorSelecionado");
-        congregacaoelecionada = (Congregacao) intent.getSerializableExtra("congregacaoelecionada");
+        congregacaoSelecionada = (Congregacao) intent.getSerializableExtra("congregacaoSelecionada");
         discursoSelecionado = (Discurso) intent.getSerializableExtra("discursoSelecionado");
 
         String fragmentAbrir = (String) getIntent().getCharSequenceExtra("qualFragmentAbrir");
@@ -89,6 +89,7 @@ public class AdicionarEditarActivity extends BaseActivity {
 
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("oradorSelecionado", oradorSelecionado);
+                bundle.putSerializable("congregacaoSelecionada", congregacaoSelecionada);
                 AddEditarOradorFragment addEditarOradorFragment = new AddEditarOradorFragment();
                 addEditarOradorFragment.setArguments(bundle);
                 replaceFragment(R.id.fragment_container_add_editar, addEditarOradorFragment);
@@ -163,14 +164,17 @@ public class AdicionarEditarActivity extends BaseActivity {
         edtCidadeCongregacao = dialogoView.findViewById(R.id.edt_dialog_add_cidade_congregação);
 
 
-        if (congregacaoelecionada != null) {
-            edtNomeCongregacao.setText(congregacaoelecionada.getNomeCongregacao());
-            edtCidadeCongregacao.setText(congregacaoelecionada.getCidadeCongregação());
+        if (congregacaoSelecionada != null) {
+            edtNomeCongregacao.setText(congregacaoSelecionada.getNomeCongregacao());
+            edtCidadeCongregacao.setText(congregacaoSelecionada.getCidadeCongregação());
 
             dialogo.setNeutralButton("EXCLUIR", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    Toast.makeText(AdicionarEditarActivity.this, "Excuido", Toast.LENGTH_SHORT).show();
+
+                    databaseReference.child("user_data").child(userUID).child("congregacoes").child(congregacaoSelecionada.getIdCongregacao()).removeValue();
+                    Toasty.success(AdicionarEditarActivity.this, "Congregação Excluida", Toast.LENGTH_SHORT).show();
+
                     dialog.dismiss();
                     finish();
                 }
@@ -183,8 +187,8 @@ public class AdicionarEditarActivity extends BaseActivity {
 
                 nomeCongregacao = edtNomeCongregacao.getText().toString().trim();
                 cidadeCongregacao = edtCidadeCongregacao.getText().toString().trim();
-                if (congregacaoelecionada != null){
-                    idCongregacao = congregacaoelecionada.getIdCongregacao();
+                if (congregacaoSelecionada != null){
+                    idCongregacao = congregacaoSelecionada.getIdCongregacao();
                     salvarCongregacao();
                 }else {
                     idCongregacao = databaseReference.child("user_data").child(userUID).child("congregacoes").push().getKey();
@@ -205,6 +209,12 @@ public class AdicionarEditarActivity extends BaseActivity {
         final AlertDialog alertDialog = dialogo.create();
 
         alertDialog.show();
+
+        Button bC = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        bC.setTextColor(Color.GRAY);
+        Button bN = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        bN.setTextColor(Color.RED);
+
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 
         edtCidadeCongregacao.addTextChangedListener(new TextWatcher() {
@@ -223,6 +233,8 @@ public class AdicionarEditarActivity extends BaseActivity {
 
                 if (s.length() >= 1) {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    b.setTextColor(getResources().getColor(R.color.green_500));
                 } else {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 
@@ -246,6 +258,8 @@ public class AdicionarEditarActivity extends BaseActivity {
 
                 if (s.length() >= 1) {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    b.setTextColor(getResources().getColor(R.color.green_500));
                 } else {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 
@@ -271,7 +285,7 @@ public class AdicionarEditarActivity extends BaseActivity {
                         .child(idCongregacao)
                         .setValue(congregacaoNova);
 
-                if (congregacaoelecionada != null){
+                if (congregacaoSelecionada != null){
                     Toasty.success(AdicionarEditarActivity.this, "Congregação Atualizada", Toast.LENGTH_SHORT).show();
                 }else {
                     Toasty.success(AdicionarEditarActivity.this, "Congregação Salva", Toast.LENGTH_SHORT).show();
@@ -314,6 +328,18 @@ public class AdicionarEditarActivity extends BaseActivity {
         if (discursoSelecionado != null) {
             edtNumeroDiscurso.setText(discursoSelecionado.getNumero());
             edtTemaDiscurso.setText(discursoSelecionado.getTema());
+
+            dialogo.setNeutralButton("EXCLUIR", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    databaseReference.child("user_data").child(userUID).child("discursos").child(discursoSelecionado.getIdDiscurso()).removeValue();
+                    Toasty.success(AdicionarEditarActivity.this, "Discurso Excluido", Toast.LENGTH_SHORT).show();
+
+                    dialog.dismiss();
+                    finish();
+                }
+            });
         }
 
         dialogo.setPositiveButton("Salvar", new DialogInterface.OnClickListener() {
@@ -345,6 +371,11 @@ public class AdicionarEditarActivity extends BaseActivity {
 
         alertDialog.show();
 
+        Button bC = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        bC.setTextColor(Color.GRAY);
+        Button bN = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        bN.setTextColor(Color.RED);
+
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 
         edtNumeroDiscurso.addTextChangedListener(new TextWatcher() {
@@ -363,6 +394,8 @@ public class AdicionarEditarActivity extends BaseActivity {
 
                 if (s.length() >= 1) {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    b.setTextColor(getResources().getColor(R.color.green_500));
                 } else {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 
@@ -386,6 +419,8 @@ public class AdicionarEditarActivity extends BaseActivity {
 
                 if (s.length() >= 1) {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    b.setTextColor(getResources().getColor(R.color.green_500));
                 } else {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 

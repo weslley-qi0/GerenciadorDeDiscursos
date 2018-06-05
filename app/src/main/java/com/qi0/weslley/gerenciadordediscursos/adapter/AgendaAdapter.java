@@ -113,6 +113,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHold
                 String idCongregacao = congregacao.getIdCongregacao();
                 if (idCongregacao.equals(agenda.getIdCongregacao())) {
                     nomeCong = congregacao.getNomeCongregacao();
+                    return nomeCong;
                 }
             }
         }
@@ -120,13 +121,13 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHold
     }
 
     private String pegarNomeOrador(Agenda agenda){
-
         String nomeOrador = "";
         for (Orador orador : oradorList){
             if (orador.getId() != null) {
                 String idOrador = orador.getId();
                 if (idOrador.equals(agenda.getIdOrador())) {
                     nomeOrador = orador.getNome();
+                    return nomeOrador;
                 }
             }
         }
@@ -141,6 +142,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHold
                 String idDiscurso = discurso.getIdDiscurso();
                 if (idDiscurso.equals(agenda.getIdDiscurso())) {
                     temaDiscurso = discurso.getTema();
+                    return temaDiscurso;
                 }
             }
         }

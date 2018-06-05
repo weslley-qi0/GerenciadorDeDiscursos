@@ -140,6 +140,8 @@ public class AddEditarOradorFragment extends BaseFragment {
         Permissao.validarPermissoes(permissoesNecessarias, getActivity(), 1);
 
         oradorSelecionado = (Orador) getArguments().getSerializable("oradorSelecionado");
+        congregacaoSelecionada = (Congregacao) getArguments().getSerializable("congregacaoSelecionada");
+
         userUID = firebaseAuth.getCurrentUser().getUid();
         pegarCongregacoesDoBanco();
 
@@ -158,6 +160,10 @@ public class AddEditarOradorFragment extends BaseFragment {
         if (oradorSelecionado != null) {
             idCongregacaoSelecionada = oradorSelecionado.getIdCongregacao();
             setValoresNoFormulario();
+        }
+        if (congregacaoSelecionada != null){
+            edtCongregacao.setText(congregacaoSelecionada.getNomeCongregacao());
+            idCongregacaoSelecionada = congregacaoSelecionada.getIdCongregacao();
         }
 
         edtTelefone.addTextChangedListener(Mask.insert("(##)#####-####", edtTelefone));
@@ -315,7 +321,6 @@ public class AddEditarOradorFragment extends BaseFragment {
     private void setValoresNoFormulario() {
 
         edtNome.setText(oradorSelecionado.getNome());
-        //edtCongregacao.setText(congregacaoSelecionada.getNomeCongregacao());
         edtTelefone.setText(oradorSelecionado.getTelefone());
         edtEmail.setText(oradorSelecionado.getEmail());
         ratingBarOrador.setRating(oradorSelecionado.getRatingOrador());
@@ -633,7 +638,7 @@ public class AddEditarOradorFragment extends BaseFragment {
         LayoutInflater inflater = getLayoutInflater();
         View dialogoView = inflater.inflate(R.layout.dialog_add_editar_congregacao, null);
         dialogo.setView(dialogoView);
-        dialogo.setCancelable(false);
+        dialogo.setCancelable(true);
         dialogo.setTitle("Adicionar Congregação");
 
         edtNomeCongregacao = dialogoView.findViewById(R.id.edt_dialog_add_nome_congregação);
