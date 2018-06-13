@@ -739,13 +739,20 @@ public class AddEditarOradorFragment extends BaseFragment {
                 idCongregacaoSelecionada = congregacaoNova.getIdCongregacao();
 
             } else {
-                Toasty.info(getContext(), "Preencha todos os Campos!", Toast.LENGTH_SHORT).show();
-                //Toasty.info(AdicionarEditarActivity.this, "Digite o nome da Cidade!", Toast.LENGTH_SHORT).show();
-                //dialogoAddNovaCongregacao();
+                Toasty.info(getContext(), "Adicione uma cidade!", Toast.LENGTH_SHORT).show();
+                if (!nomeCongregacao.isEmpty()){
+                    dialogoAddNovaCongregacao();
+                    edtNomeCongregacao.setText(nomeCongregacao);
+                    edtCidadeCongregacao.setText("");
+                }
             }
         } else {
-            Toasty.info(getContext(), "Preencha todos os Campos!", Toast.LENGTH_SHORT).show();
-            //dialogoAddNovaCongregacao();
+            Toasty.info(getContext(), "Adicione o nome da congregação!", Toast.LENGTH_SHORT).show();
+            if (!cidadeCongregacao.isEmpty()){
+                dialogoAddNovaCongregacao();
+                edtCidadeCongregacao.setText(cidadeCongregacao);
+                edtNomeCongregacao.setText("");
+            }
         }
     }
 

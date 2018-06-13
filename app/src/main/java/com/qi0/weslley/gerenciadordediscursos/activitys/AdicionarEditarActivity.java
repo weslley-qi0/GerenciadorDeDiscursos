@@ -35,6 +35,7 @@ public class AdicionarEditarActivity extends BaseActivity {
     EditText edtCidadeCongregacao;
     EditText edtNumeroDiscurso;
     EditText edtTemaDiscurso;
+    FloatingActionButton fab;
 
     Orador oradorSelecionado;
     Congregacao congregacaoNova;
@@ -76,13 +77,12 @@ public class AdicionarEditarActivity extends BaseActivity {
 
         String fragmentAbrir = (String) getIntent().getCharSequenceExtra("qualFragmentAbrir");
 
+        fab = findViewById(R.id.fab_add_editar);
+
         switch (fragmentAbrir) {
             case "AddCongregacaoFragment":
-
-                /*replaceFragment(R.id.fragment_container_add_editar, new Fragment());
-                getSupportActionBar().setTitle("Nova Congregação");*/
-
                 dialogoAddCongregacao();
+                fab.hide();
 
                 break;
             case "AddOradorFragment":
@@ -98,24 +98,11 @@ public class AdicionarEditarActivity extends BaseActivity {
                 break;
             case "AddDiscursosFragment":
 
-                /*replaceFragment(R.id.fragment_container_add_editar, new Fragment());
-                getSupportActionBar().setTitle("Novo Discurso");*/
-
                 dialogoAddDiscurso();
+                fab.hide();
 
                 break;
         }
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add_editar);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                //dialogoAddCongregacao2();
-                Toast.makeText(AdicionarEditarActivity.this, "Salvando...", Toast.LENGTH_SHORT).show();
-                //finish();
-            }
-        });
     }
 
     @Override
@@ -155,10 +142,18 @@ public class AdicionarEditarActivity extends BaseActivity {
         LayoutInflater inflater = getLayoutInflater();
         View dialogoView = inflater.inflate(R.layout.dialog_add_editar_congregacao, null);
         dialogo.setView(dialogoView);
-        dialogo.setCancelable(false);
+        dialogo.setCancelable(true);
         dialogo.setTitle("Adicionar Congregação");
 
-        getSupportActionBar().setTitle("");
+        dialogo.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                finish();
+            }
+        });
+
+        //getSupportActionBar().setTitle("");
+        getSupportActionBar().hide();
 
         edtNomeCongregacao = dialogoView.findViewById(R.id.edt_dialog_add_nome_congregação);
         edtCidadeCongregacao = dialogoView.findViewById(R.id.edt_dialog_add_cidade_congregação);
@@ -316,10 +311,18 @@ public class AdicionarEditarActivity extends BaseActivity {
         LayoutInflater inflater = getLayoutInflater();
         View dialogoView = inflater.inflate(R.layout.dialog_add_editar_discurso, null);
         dialogo.setView(dialogoView);
-        dialogo.setCancelable(false);
+        dialogo.setCancelable(true);
         dialogo.setTitle("Adicionar Discurso");
 
-        getSupportActionBar().setTitle("");
+        dialogo.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                finish();
+            }
+        });
+
+        //getSupportActionBar().setTitle("");
+        getSupportActionBar().hide();
 
         edtNumeroDiscurso = dialogoView.findViewById(R.id.edt_dialog_add_numero_discurso);
         edtTemaDiscurso = dialogoView.findViewById(R.id.edt_dialog_add_tema_discurso);

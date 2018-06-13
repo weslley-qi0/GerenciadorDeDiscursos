@@ -9,11 +9,13 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -23,6 +25,8 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,6 +52,9 @@ import es.dmoral.toasty.Toasty;
  * A simple {@link Fragment} subclass.
  */
 public class CongregacoesFragment extends BaseFragment{
+
+    ImageView imgCongregacoesEmpty;
+    TextView msgCongregacoesEmpty;
 
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
@@ -77,6 +84,9 @@ public class CongregacoesFragment extends BaseFragment{
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_congregacoes, container, false);
 
+        Toolbar toolbarCongregacoes = view.findViewById(R.id.toolbar_pricipal);
+        toolbarCongregacoes.setTitle("Congregações");
+
         databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
         firebaseAuth = ConfiguracaoFirebase.getAuth();
 
@@ -84,6 +94,8 @@ public class CongregacoesFragment extends BaseFragment{
 
         setHasOptionsMenu(true);
 
+        imgCongregacoesEmpty = view.findViewById(R.id.img_congregacoes_empty);
+        msgCongregacoesEmpty = view.findViewById(R.id.msg_img_congregacoes_empty_empty);
         recyclerView = view.findViewById(R.id.recycle_view_congregaçoes);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
@@ -173,6 +185,16 @@ public class CongregacoesFragment extends BaseFragment{
                 }
 
                 adapter.notifyDataSetChanged();
+
+                if (congregacoesList.size() == 0){
+                    recyclerView.setVisibility(View.GONE);
+                    imgCongregacoesEmpty.setVisibility(View.VISIBLE);
+                    msgCongregacoesEmpty.setVisibility(View.VISIBLE);
+                }else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    imgCongregacoesEmpty.setVisibility(View.GONE);
+                    msgCongregacoesEmpty.setVisibility(View.GONE);
+                }
             }
 
             @Override

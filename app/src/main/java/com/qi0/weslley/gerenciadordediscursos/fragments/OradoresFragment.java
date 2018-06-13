@@ -13,6 +13,7 @@ import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -22,6 +23,8 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -52,6 +55,8 @@ import es.dmoral.toasty.Toasty;
  */
 public class OradoresFragment extends BaseFragment {
 
+    ImageView imgOradoresEmpty;
+    TextView msgOradoresEmpty;
 
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
@@ -79,6 +84,9 @@ public class OradoresFragment extends BaseFragment {
 
         View view = inflater.inflate(R.layout.fragment_oradores, container, false);
 
+        Toolbar toolbarOradores = view.findViewById(R.id.toolbar_pricipal);
+        toolbarOradores.setTitle("Oradores");
+
         setHasOptionsMenu(true);
 
         databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
@@ -86,6 +94,8 @@ public class OradoresFragment extends BaseFragment {
 
         userUID = firebaseAuth.getCurrentUser().getUid();
 
+        imgOradoresEmpty = view.findViewById(R.id.img_oradores_empty);
+        msgOradoresEmpty = view.findViewById(R.id.msg_img_oradores_empty_empty);
         recyclerView = view.findViewById(R.id.recycle_view_oradores);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
@@ -180,6 +190,16 @@ public class OradoresFragment extends BaseFragment {
                 }
 
                 adapter.notifyDataSetChanged();
+
+                if (oradoresList.size() == 0){
+                    recyclerView.setVisibility(View.GONE);
+                    imgOradoresEmpty.setVisibility(View.VISIBLE);
+                    msgOradoresEmpty.setVisibility(View.VISIBLE);
+                }else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    imgOradoresEmpty.setVisibility(View.GONE);
+                    msgOradoresEmpty.setVisibility(View.GONE);
+                }
                 //getSupportActionBar().setTitle(String.valueOf(oradoresList.size()));
             }
 

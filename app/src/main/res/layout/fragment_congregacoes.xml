@@ -9,18 +9,39 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include layout="@layout/toolbar_pincipal"/>
+        <include layout="@layout/toolbar_pincipal" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycle_view_congregaçoes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="2dp"
             android:layout_alignParentTop="true"
+            android:layout_marginBottom="2dp"
             android:layout_marginTop="55dp" />
 
-    </RelativeLayout>
+        <ImageView
+            android:id="@+id/img_congregacoes_empty"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/img_congregacao"
+            android:visibility="gone" />
 
+        <TextView
+            android:id="@+id/msg_img_congregacoes_empty_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/img_congregacoes_empty"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="8dp"
+            android:text="Ainda não há Congregações cadastradas!"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            android:visibility="gone" />
+
+    </RelativeLayout>
 
 
 </FrameLayout>

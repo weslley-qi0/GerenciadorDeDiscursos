@@ -318,6 +318,10 @@ public class MessesFragment extends BaseFragment {
         recyclerViewDialogo.setLayoutManager(layoutManagerDialogo);
         recyclerViewDialogo.setHasFixedSize(true);
 
+        if (congregacaoList.size() <= 0) {
+            dialogo.setTitle("Não há Congregações Cadastradas!");
+        }
+
         congregacaoAdapter = new CongregacaoAdapter(congregacaoList, oradoresList, getContext());
 
         recyclerViewDialogo.setAdapter(congregacaoAdapter);
@@ -380,7 +384,7 @@ public class MessesFragment extends BaseFragment {
         recyclerViewDialogo.setHasFixedSize(true);
 
         if (oradoresList.size() <= 0) {
-            dialogo.setTitle("Não há Oradores Cadastrados Nessa Congregação!");
+            dialogo.setTitle("Não há Oradores Cadastrados!");
         }
 
         oradorAdaper = new OradorAdaper(oradoresList, congregacaoList, getContext());
@@ -449,6 +453,10 @@ public class MessesFragment extends BaseFragment {
         recyclerViewDialogo.setLayoutManager(layoutManagerDialogo);
         recyclerViewDialogo.setHasFixedSize(true);
 
+        if (discursosList.size() <= 0) {
+            dialogo.setTitle("Não há Discursos Cadastrados!");
+        }
+
         discursoAdapter = new DiscursoAdapter(discursosList, getContext());
 
         recyclerViewDialogo.setAdapter(discursoAdapter);
@@ -457,7 +465,6 @@ public class MessesFragment extends BaseFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialogoAddNovoDiscurso();
-                Toast.makeText(getActivity(), "Adicionado", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
         }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -524,6 +531,11 @@ public class MessesFragment extends BaseFragment {
 
         alertDialog.show();
 
+        Button bC = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        bC.setTextColor(Color.GRAY);
+        Button bN = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        bN.setTextColor(Color.RED);
+
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 
         edtCidadeCongregacao.addTextChangedListener(new TextWatcher() {
@@ -542,6 +554,8 @@ public class MessesFragment extends BaseFragment {
 
                 if (s.length() >= 1) {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    b.setTextColor(getResources().getColor(R.color.green_500));
                 } else {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 
@@ -565,6 +579,8 @@ public class MessesFragment extends BaseFragment {
 
                 if (s.length() >= 1) {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    b.setTextColor(getResources().getColor(R.color.green_500));
                 } else {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 
@@ -607,6 +623,11 @@ public class MessesFragment extends BaseFragment {
 
         alertDialog.show();
 
+        Button bC = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        bC.setTextColor(Color.GRAY);
+        Button bN = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        bN.setTextColor(Color.RED);
+
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 
         edtNumeroDiscurso.addTextChangedListener(new TextWatcher() {
@@ -625,6 +646,8 @@ public class MessesFragment extends BaseFragment {
 
                 if (s.length() >= 1) {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    b.setTextColor(getResources().getColor(R.color.green_500));
                 } else {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 
@@ -648,6 +671,8 @@ public class MessesFragment extends BaseFragment {
 
                 if (s.length() >= 1) {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    b.setTextColor(getResources().getColor(R.color.green_500));
                 } else {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 
@@ -663,7 +688,6 @@ public class MessesFragment extends BaseFragment {
 
         if (!nomeCongregacao.isEmpty()) {
             if (!cidadeCongregacao.isEmpty()) {
-
 
                 Congregacao congregacaoNova = new Congregacao();
                 congregacaoNova.setIdCongregacao(idCongregacao);
@@ -682,13 +706,20 @@ public class MessesFragment extends BaseFragment {
                 idCongregacaoEscolhida = congregacaoNova.getIdCongregacao();
 
             } else {
-                Toasty.info(getContext(), "Preencha todos os Campos!", Toast.LENGTH_SHORT).show();
-                //Toasty.info(AdicionarEditarActivity.this, "Digite o nome da Cidade!", Toast.LENGTH_SHORT).show();
-                //dialogoAddNovaCongregacao();
+                Toasty.info(getContext(), "Adicione uma cidade!", Toast.LENGTH_SHORT).show();
+                if (!nomeCongregacao.isEmpty()){
+                    dialogoAddNovaCongregacao();
+                    edtNomeCongregacao.setText(nomeCongregacao);
+                    edtCidadeCongregacao.setText("");
+                }
             }
         } else {
-            Toasty.info(getContext(), "Preencha todos os Campos!", Toast.LENGTH_SHORT).show();
-            //dialogoAddNovaCongregacao();
+            Toasty.info(getContext(), "Adicione o nome da congregação!", Toast.LENGTH_SHORT).show();
+            if (!cidadeCongregacao.isEmpty()){
+                dialogoAddNovaCongregacao();
+                edtCidadeCongregacao.setText(cidadeCongregacao);
+                edtNomeCongregacao.setText("");
+            }
         }
     }
 

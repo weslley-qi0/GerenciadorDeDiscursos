@@ -2,12 +2,14 @@ package com.qi0.weslley.gerenciadordediscursos.activitys;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.fragments.AgendaFragment;
@@ -16,11 +18,15 @@ import com.qi0.weslley.gerenciadordediscursos.fragments.DiscursosFragment;
 import com.qi0.weslley.gerenciadordediscursos.fragments.OradoresFragment;
 import com.qi0.weslley.gerenciadordediscursos.fragments.SettingsFragment;
 
+import es.dmoral.toasty.Toasty;
+
 public class MainActivity extends BaseActivity {
 
     BottomNavigationView navigation;
     FloatingActionButton fab;
     Fragment fragment = null;
+
+    Boolean doubleBackToExitPressedOnce = false;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -99,4 +105,18 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+        this.doubleBackToExitPressedOnce = true;
+        Toasty.info(MainActivity.this, "Pressione novamente para sair!", Toast.LENGTH_SHORT, false).show();
+        new Handler().postDelayed(new Runnable() {@Override
+        public void run() {
+            doubleBackToExitPressedOnce = false;
+        }
+        }, 2000);
+    }
 }

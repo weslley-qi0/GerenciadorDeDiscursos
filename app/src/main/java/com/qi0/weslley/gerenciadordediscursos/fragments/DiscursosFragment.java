@@ -13,6 +13,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -22,6 +23,8 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,6 +53,8 @@ public class DiscursosFragment extends BaseFragment {
     LinearLayoutManager layoutManager;
     DiscursoAdapter adapter;
     Discurso discursoSelecionado;
+    ImageView imgDiscursosEmpty;
+    TextView msgDiscursosEmpty;
 
     ArrayList<Discurso> discursosList = new ArrayList();
 
@@ -69,6 +74,9 @@ public class DiscursosFragment extends BaseFragment {
 
         View view = inflater.inflate(R.layout.fragment_discursos, container, false);
 
+        Toolbar toolbarDiscursos = view.findViewById(R.id.toolbar_pricipal);
+        toolbarDiscursos.setTitle("Discursos");
+
         databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
         firebaseAuth = ConfiguracaoFirebase.getAuth();
 
@@ -76,6 +84,8 @@ public class DiscursosFragment extends BaseFragment {
 
         setHasOptionsMenu(true);
 
+        imgDiscursosEmpty = view.findViewById(R.id.img_discusos_empty);
+        msgDiscursosEmpty = view.findViewById(R.id.msg_discurso_empty);
         recyclerView = view.findViewById(R.id.recycle_view_discursos);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
@@ -87,24 +97,8 @@ public class DiscursosFragment extends BaseFragment {
         recyclerView.setAdapter(adapter);
 
         runLayoutAnimation(recyclerView);
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
 
-                FloatingActionButton fab = getActivity().findViewById(R.id.fab);
-
-                if (dy > 0){
-                    if (fab.isShown()){
-                        fab.hide();
-                    }
-                }else if (dy < 0){
-                    if (!fab.isShown()){
-                        fab.show();
-                    }
-                }
-            }
-        });
+        scrollFabHideShow();
 
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
@@ -126,6 +120,37 @@ public class DiscursosFragment extends BaseFragment {
         return view;
     }
 
+    private void runLayoutAnimation(final RecyclerView recyclerView) {
+        final Context context = recyclerView.getContext();
+        final LayoutAnimationController controller =
+                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down);
+
+        recyclerView.setLayoutAnimation(controller);
+        recyclerView.getAdapter().notifyDataSetChanged();
+        recyclerView.scheduleLayoutAnimation();
+    }
+
+    private void scrollFabHideShow() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                FloatingActionButton fab = getActivity().findViewById(R.id.fab);
+
+                if (dy > 0){
+                    if (fab.isShown()){
+                        fab.hide();
+                    }
+                }else if (dy < 0){
+                    if (!fab.isShown()){
+                        fab.show();
+                    }
+                }
+            }
+        });
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -136,16 +161,6 @@ public class DiscursosFragment extends BaseFragment {
     public void onStop() {
         super.onStop();
         databaseReference.removeEventListener(valueEventListenerDiscursos);
-    }
-
-    private void runLayoutAnimation(final RecyclerView recyclerView) {
-        final Context context = recyclerView.getContext();
-        final LayoutAnimationController controller =
-                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down);
-
-        recyclerView.setLayoutAnimation(controller);
-        recyclerView.getAdapter().notifyDataSetChanged();
-        recyclerView.scheduleLayoutAnimation();
     }
 
     private void pegarDiscursosDoBanco() {
@@ -159,8 +174,17 @@ public class DiscursosFragment extends BaseFragment {
                     discursosList.add(discurso);
                     Collections.sort(discursosList);
                 }
-
                 adapter.notifyDataSetChanged();
+
+                if (discursosList.size() == 0){
+                    recyclerView.setVisibility(View.GONE);
+                    imgDiscursosEmpty.setVisibility(View.VISIBLE);
+                    msgDiscursosEmpty.setVisibility(View.VISIBLE);
+                }else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    imgDiscursosEmpty.setVisibility(View.GONE);
+                    msgDiscursosEmpty.setVisibility(View.GONE);
+                }
             }
 
             @Override
