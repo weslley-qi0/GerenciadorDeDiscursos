@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +35,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.qi0.weslley.gerenciadordediscursos.activitys.MainActivity;
 import com.qi0.weslley.gerenciadordediscursos.adapter.OradorAdaper;
 import com.qi0.weslley.gerenciadordediscursos.config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
@@ -45,6 +47,7 @@ import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import es.dmoral.toasty.Toasty;
 
@@ -62,7 +65,7 @@ public class CongregacoesFragment extends BaseFragment{
     CongregacaoAdapter adapter;
     Congregacao congregacaoSelecionada;
     ArrayList<Orador> oradoresDaCongregacaoClicada = new ArrayList<>();
-    ArrayList congregacoesList = new ArrayList();
+    public ArrayList<Congregacao> congregacoesList = new ArrayList();
     ArrayList<Orador> oradoresList = new ArrayList();
 
     String idCongregacaoSelecionada;
@@ -84,7 +87,10 @@ public class CongregacoesFragment extends BaseFragment{
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_congregacoes, container, false);
 
+        setHasOptionsMenu(true);
+
         Toolbar toolbarCongregacoes = view.findViewById(R.id.toolbar_pricipal);
+        ((MainActivity) getActivity()).setSupportActionBar(toolbarCongregacoes);
         toolbarCongregacoes.setTitle("Congregações");
 
         databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
@@ -92,7 +98,7 @@ public class CongregacoesFragment extends BaseFragment{
 
         userUID = firebaseAuth.getCurrentUser().getUid();
 
-        setHasOptionsMenu(true);
+
 
         imgCongregacoesEmpty = view.findViewById(R.id.img_congregacoes_empty);
         msgCongregacoesEmpty = view.findViewById(R.id.msg_img_congregacoes_empty_empty);
@@ -102,7 +108,7 @@ public class CongregacoesFragment extends BaseFragment{
         //recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
 
-        adapter = new CongregacaoAdapter(congregacoesList,oradoresList, getContext());
+        adapter = new CongregacaoAdapter(congregacoesList, oradoresList, getContext());
 
         recyclerView.setAdapter(adapter);
 
@@ -130,7 +136,8 @@ public class CongregacoesFragment extends BaseFragment{
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                congregacaoSelecionada = (Congregacao) congregacoesList.get(position);
+                List<Congregacao> congregacoesListaAtualizada = adapter.getCongregacaoList();
+                congregacaoSelecionada = (Congregacao) congregacoesListaAtualizada.get(position);
                 idCongregacaoSelecionada = congregacaoSelecionada.getIdCongregacao();
                 dialogoExibirOradoesPorCongregacao();
             }
@@ -303,6 +310,31 @@ public class CongregacoesFragment extends BaseFragment{
         }
     }
 
+    public void pequisarCongregacoes(String texto){
+
+        ArrayList<Congregacao> congregacoesListaPesquisa = new ArrayList<>();
+
+        for (Congregacao congregacao : congregacoesList) {
+
+            String nomeCong = congregacao.getNomeCongregacao().toLowerCase();
+            String cidadeCong = congregacao.getCidadeCongregação().toLowerCase();
+
+            if (nomeCong.contains(texto) || cidadeCong.contains(texto)){
+                congregacoesListaPesquisa.add(congregacao);
+            }
+        }
+
+        adapter = new CongregacaoAdapter(congregacoesListaPesquisa, oradoresList, getContext());
+        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
+    public void recaregarCongregacoes(){
+        adapter = new CongregacaoAdapter(congregacoesList, oradoresList, getContext());
+        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
     @SuppressLint("RestrictedApi")
     public void showPopup(View v) {
         PopupMenu popup = new PopupMenu(getContext(), v);
@@ -320,6 +352,7 @@ public class CongregacoesFragment extends BaseFragment{
                         return true;
                     case R.id.item_deletar:
                         databaseReference.child("user_data").child(userUID).child("congregacoes").child(congregacaoSelecionada.getIdCongregacao()).removeValue();
+                        recaregarCongregacoes();
                         Toasty.success(getContext(), "Congregação Deletada", Toast.LENGTH_SHORT).show();
                         return true;
                     default:

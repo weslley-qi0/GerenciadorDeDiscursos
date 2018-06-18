@@ -1,8 +1,10 @@
 package com.qi0.weslley.gerenciadordediscursos.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -24,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -53,6 +56,8 @@ import java.util.List;
 
 import es.dmoral.toasty.Toasty;
 
+import static com.google.android.gms.flags.impl.SharedPreferencesFactory.getSharedPreferences;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -60,6 +65,7 @@ public class MessesFragment extends BaseFragment {
 
     int mes = 0;
     int ano = 2018;
+    final static String KEY_PREFERENCE = "keyPreference";
 
     EditText edtNomeCongregacao;
     EditText edtCidadeCongregacao;
@@ -123,6 +129,9 @@ public class MessesFragment extends BaseFragment {
         if (getArguments() != null) {
             this.mes = getArguments().getInt("mes");
         }
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(KEY_PREFERENCE , Context.MODE_PRIVATE);
+        ano = sharedPreferences.getInt("anoSelecionado", ano);
 
         recyclerView = view.findViewById(R.id.recycle_view_meses_fragments);
         layoutManager = new LinearLayoutManager(getActivity());
@@ -977,6 +986,7 @@ public class MessesFragment extends BaseFragment {
             oradorEscolhido = (Orador) bundle.getSerializable("oradorSelecionado");
             idOradorEscolhido = oradorEscolhido.getId();
             edtOrador.setText(oradorEscolhido.getNome());
+            pegaNomeDaCongregacao(oradorEscolhido.getIdCongregacao());
         }
     }
 

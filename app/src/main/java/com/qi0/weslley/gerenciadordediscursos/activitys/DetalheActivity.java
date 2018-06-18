@@ -22,8 +22,8 @@ public class DetalheActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalhe);
 
-        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);*/
+        /*Toolbar toolbar_spinner = (Toolbar) findViewById(R.id.toolbar_spinner);
+        setSupportActionBar(toolbar_spinner);*/
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //getSupportActionBar().setElevation(0);
 

@@ -23,6 +23,10 @@ public class DiscursoAdapter extends RecyclerView.Adapter<DiscursoAdapter.MyView
         this.context = context;
     }
 
+    public List<Discurso> getDiscursos() {
+        return this.discursos;
+    }
+
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

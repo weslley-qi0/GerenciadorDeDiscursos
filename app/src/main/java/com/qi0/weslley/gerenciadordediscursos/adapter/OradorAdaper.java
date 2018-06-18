@@ -41,6 +41,10 @@ public class OradorAdaper extends RecyclerView.Adapter<OradorAdaper.MyViewHolder
         this.context = context;
     }
 
+    public List<Orador> getOradores() {
+        return this.oradores;
+    }
+
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

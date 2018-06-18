@@ -29,6 +29,10 @@ public class CongregacaoAdapter extends RecyclerView.Adapter<CongregacaoAdapter.
         this.context = context;
     }
 
+    public List<Congregacao> getCongregacaoList() {
+        return this.congregacaoList;
+    }
+
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

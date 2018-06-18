@@ -35,6 +35,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
+import com.qi0.weslley.gerenciadordediscursos.activitys.MainActivity;
 import com.qi0.weslley.gerenciadordediscursos.config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
@@ -63,7 +64,7 @@ public class OradoresFragment extends BaseFragment {
     OradorAdaper adapter;
     Orador oradorSelecionado;
 
-    ArrayList oradoresList = new ArrayList();
+    public ArrayList<Orador> oradoresList = new ArrayList();
     ArrayList congregacaoList = new ArrayList();
 
     DatabaseReference databaseReference;
@@ -85,6 +86,7 @@ public class OradoresFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_oradores, container, false);
 
         Toolbar toolbarOradores = view.findViewById(R.id.toolbar_pricipal);
+        ((MainActivity) getActivity()).setSupportActionBar(toolbarOradores);
         toolbarOradores.setTitle("Oradores");
 
         setHasOptionsMenu(true);
@@ -130,7 +132,8 @@ public class OradoresFragment extends BaseFragment {
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                oradorSelecionado = (Orador) oradoresList.get(position);
+                List<Orador> oradoresListaAtualizada = adapter.getOradores();
+                oradorSelecionado = (Orador) oradoresListaAtualizada.get(position);
                 Intent intentOradorDealhes = new Intent(getActivity(), DetalheActivity.class);
                 intentOradorDealhes.putExtra("qualFragmentAbrir", "DetalheOradorFragment");
                 intentOradorDealhes.putExtra("orador", oradorSelecionado);
@@ -139,7 +142,8 @@ public class OradoresFragment extends BaseFragment {
 
             @Override
             public void onLongItemClick(View view, int position) {
-                oradorSelecionado = (Orador) oradoresList.get(position);
+                List<Orador> oradoresListaAtualizada = adapter.getOradores();
+                oradorSelecionado = (Orador) oradoresListaAtualizada.get(position);
                 showPopup(view);
             }
 
@@ -174,7 +178,7 @@ public class OradoresFragment extends BaseFragment {
         recyclerView.scheduleLayoutAnimation();
     }
 
-    private void pegarOradores() {
+    public void pegarOradores() {
 
         valueEventListenerOradores = databaseReference.child("user_data")
                              .child(userUID)
@@ -259,6 +263,30 @@ public class OradoresFragment extends BaseFragment {
         });
     }
 
+    public void pequisarOradores(String texto){
+
+        ArrayList<Orador> oradoresListaPesquisa = new ArrayList<>();
+
+        for (Orador orador : oradoresList) {
+
+            String nomeOrador = orador.getNome().toLowerCase();
+
+            if (nomeOrador.contains(texto)){
+                oradoresListaPesquisa.add(orador);
+            }
+        }
+
+        adapter = new OradorAdaper(oradoresListaPesquisa, congregacaoList, getContext());
+        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
+    public void recaregarOradores(){
+        adapter = new OradorAdaper(oradoresList, congregacaoList, getContext());
+        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
     @SuppressLint("RestrictedApi")
     public void showPopup(View v) {
         PopupMenu popup = new PopupMenu(getContext(), v);
@@ -277,6 +305,7 @@ public class OradoresFragment extends BaseFragment {
                     case R.id.item_deletar:
                         databaseReference.child("user_data").child(userUID).child("oradores").child(oradorSelecionado.getId()).removeValue();
                         deleteImagePerfilOrador();
+                        recaregarOradores();
                         Toasty.success(getContext(), "Orador Deletado", Toast.LENGTH_SHORT).show();
                         return true;
                     default:

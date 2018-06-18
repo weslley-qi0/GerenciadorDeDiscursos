@@ -32,6 +32,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.qi0.weslley.gerenciadordediscursos.activitys.MainActivity;
 import com.qi0.weslley.gerenciadordediscursos.config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
@@ -41,6 +42,7 @@ import com.qi0.weslley.gerenciadordediscursos.model.Discurso;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import es.dmoral.toasty.Toasty;
 
@@ -56,7 +58,7 @@ public class DiscursosFragment extends BaseFragment {
     ImageView imgDiscursosEmpty;
     TextView msgDiscursosEmpty;
 
-    ArrayList<Discurso> discursosList = new ArrayList();
+    public ArrayList<Discurso> discursosList = new ArrayList();
 
     DatabaseReference databaseReference;
     FirebaseAuth firebaseAuth;
@@ -75,6 +77,7 @@ public class DiscursosFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_discursos, container, false);
 
         Toolbar toolbarDiscursos = view.findViewById(R.id.toolbar_pricipal);
+        ((MainActivity) getActivity()).setSupportActionBar(toolbarDiscursos);
         toolbarDiscursos.setTitle("Discursos");
 
         databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
@@ -108,7 +111,8 @@ public class DiscursosFragment extends BaseFragment {
 
             @Override
             public void onLongItemClick(View view, int position) {
-                discursoSelecionado = (Discurso) discursosList.get(position);
+                List<Discurso> discursosListaAtualizada = adapter.getDiscursos();
+                discursoSelecionado = (Discurso) discursosListaAtualizada.get(position);
                 showPopup(view);
             }
 
@@ -163,7 +167,7 @@ public class DiscursosFragment extends BaseFragment {
         databaseReference.removeEventListener(valueEventListenerDiscursos);
     }
 
-    private void pegarDiscursosDoBanco() {
+    public void pegarDiscursosDoBanco() {
 
         valueEventListenerDiscursos = databaseReference.child("user_data").child(userUID).child("discursos").addValueEventListener(new ValueEventListener() {
             @Override
@@ -194,6 +198,31 @@ public class DiscursosFragment extends BaseFragment {
         });
     }
 
+    public void pequisarDiscursos(String texto){
+
+        ArrayList<Discurso> discursosListaPesquisa = new ArrayList<>();
+
+        for (Discurso discurso : discursosList) {
+
+            String numeroDiscurso = String.valueOf(discurso.getNumero());
+            String temaDiscurso = discurso.getTema().toLowerCase();
+
+            if (numeroDiscurso.contains(texto) || temaDiscurso.contains(texto)){
+                discursosListaPesquisa.add(discurso);
+            }
+        }
+
+        adapter = new DiscursoAdapter(discursosListaPesquisa, getContext());
+        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
+    public void recaregarDiscursos(){
+        adapter = new DiscursoAdapter(discursosList, getContext());
+        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
     @SuppressLint("RestrictedApi")
     public void showPopup(View v) {
         PopupMenu popup = new PopupMenu(getContext(), v);
@@ -211,6 +240,7 @@ public class DiscursosFragment extends BaseFragment {
                         return true;
                     case R.id.item_deletar:
                         databaseReference.child("user_data").child(userUID).child("discursos").child(discursoSelecionado.getIdDiscurso()).removeValue();
+                        recaregarDiscursos();
                         Toasty.success(getContext(), "Discurso Deletado", Toast.LENGTH_SHORT).show();
                         return true;
                     default:
