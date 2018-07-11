@@ -1,6 +1,9 @@
 package com.qi0.weslley.gerenciadordediscursos.activitys;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,17 +19,33 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.qi0.weslley.gerenciadordediscursos.R;
+import com.qi0.weslley.gerenciadordediscursos.config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.fragments.AgendaFragment;
 import com.qi0.weslley.gerenciadordediscursos.fragments.CongregacoesFragment;
 import com.qi0.weslley.gerenciadordediscursos.fragments.DiscursosFragment;
 import com.qi0.weslley.gerenciadordediscursos.fragments.OradoresFragment;
 import com.qi0.weslley.gerenciadordediscursos.fragments.SettingsFragment;
+import com.qi0.weslley.gerenciadordediscursos.model.Agenda;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import es.dmoral.toasty.Toasty;
 
 public class MainActivity extends BaseActivity {
+
+    final static String KEY_PREFERENCE = "keyPreference";
+    SharedPreferences sharedPreferences;
+
+    FirebaseAuth firebaseAuth;
+    DatabaseReference databaseReference;
+    String userUID;
 
     BottomNavigationView navigation;
     MaterialSearchView searchView;
@@ -70,10 +90,12 @@ public class MainActivity extends BaseActivity {
                     replaceFragment(R.id.fragment_container, fragment);
                     return true;
                 case R.id.navigation_settings:
-                    fab.hide();
-                    searchView.closeSearch();
-                    fragment = new SettingsFragment();
-                    replaceFragment(R.id.fragment_container, fragment);
+                    //fab.hide();
+                    //searchView.closeSearch();
+                    //fragment = new SettingsFragment();
+                    //replaceFragment(R.id.fragment_container, fragment);
+                    startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
+                    //finish();
                     return true;
             }
             return false;
@@ -89,7 +111,6 @@ public class MainActivity extends BaseActivity {
         toolbarPrincipal.setVisibility(View.INVISIBLE);
         toolbarPrincipal.setBackgroundColor(Color.YELLOW);
         setSupportActionBar(toolbarPrincipal);
-
         getSupportActionBar().setTitle("Home");
 
         fragment = new AgendaFragment();
@@ -128,7 +149,6 @@ public class MainActivity extends BaseActivity {
         searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
             @Override
             public void onSearchViewShown() {
-
             }
 
             @Override
@@ -245,4 +265,6 @@ public class MainActivity extends BaseActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 }

@@ -1,30 +1,27 @@
 package com.qi0.weslley.gerenciadordediscursos.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.qi0.weslley.gerenciadordediscursos.R;
-import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
+import com.qi0.weslley.gerenciadordediscursos.helper.DateUtil;
 import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
-import com.squareup.picasso.Picasso;
+import com.qi0.weslley.gerenciadordediscursos.model.Proferimento;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -33,11 +30,13 @@ public class OradorAdaper extends RecyclerView.Adapter<OradorAdaper.MyViewHolder
 
     private List<Orador> oradores;
     List<Congregacao> congregacoes;
+    private List<Proferimento> proferimentosList;
     private Context context;
 
-    public OradorAdaper(List<Orador> oradores, List<Congregacao> congregacoes, Context context) {
+    public OradorAdaper(List<Orador> oradores, List<Proferimento> proferimentosList, List<Congregacao> congregacoes, Context context) {
         this.oradores = oradores;
         this.congregacoes = congregacoes;
+        this.proferimentosList = proferimentosList;
         this.context = context;
     }
 
@@ -60,7 +59,7 @@ public class OradorAdaper extends RecyclerView.Adapter<OradorAdaper.MyViewHolder
         Orador orador = oradores.get( position );
         holder.nomeOrador.setText( orador.getNome() );
         holder.congregacao.setText( pegarNomeDaCongregacao(orador.getIdCongregacao()) );
-        holder.ultimaVisita.setText( orador.getUltimaVisita() );
+        holder.ultimaVisita.setText(pegarUltimaVisitaPorOrador(orador.getId()));
 
         if( orador.getUrlFotoOrador() != null ){
             Uri uri = Uri.parse( orador.getUrlFotoOrador() );
@@ -107,5 +106,31 @@ public class OradorAdaper extends RecyclerView.Adapter<OradorAdaper.MyViewHolder
 
         }
         return nomeDaCongregacao;
+    }
+
+    private String pegarUltimaVisitaPorOrador(String idOradorProferimento) {
+        List<Proferimento> proferimentosListPorOrador = new ArrayList<>();
+        if (proferimentosList.size() > 0){
+            for (Proferimento proferimento : proferimentosList){
+                if (proferimento.getIdOradorProferimento() != null){
+                    if (proferimento.getIdOradorProferimento().equals(idOradorProferimento)){
+                        proferimentosListPorOrador.add(proferimento);
+                    }
+                }
+            }
+            Collections.sort(proferimentosListPorOrador, new Comparator<Proferimento>() {
+                        @Override
+                        public int compare(Proferimento o1, Proferimento o2) {
+                            return o1.getDataOrdenarProferimento().compareTo(o2.getDataOrdenarProferimento());
+                        }
+                    }
+            );
+            Collections.reverse(proferimentosListPorOrador);
+            if (proferimentosListPorOrador.size() > 0){
+                Proferimento proferimento = proferimentosListPorOrador.get(0);
+                return DateUtil.fomatarData(proferimento.getDataProferimento());
+            }
+        }
+        return "";
     }
 }

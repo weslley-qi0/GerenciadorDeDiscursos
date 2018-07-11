@@ -16,6 +16,7 @@ public class Proferimento implements Serializable, Comparable<Proferimento>{
 
     private String idProferimentos;
     private String dataProferimento;
+    private String dataOrdenarProferimento;
     private String idOradorProferimento;
     private String idDiscursoProferimento;
     private String idCongregacaoProferimento;
@@ -23,9 +24,10 @@ public class Proferimento implements Serializable, Comparable<Proferimento>{
     public Proferimento() {
     }
 
-    public Proferimento(String idProferimentos, String dataProferimento, String idOradorProferimento, String idDiscursoProferimento, String idCongregacaoProferimento) {
+    public Proferimento(String idProferimentos, String dataProferimento, String dataOrdenarProferimento, String idOradorProferimento, String idDiscursoProferimento, String idCongregacaoProferimento) {
         this.idProferimentos = idProferimentos;
         this.dataProferimento = dataProferimento;
+        this.dataOrdenarProferimento = dataOrdenarProferimento;
         this.idOradorProferimento = idOradorProferimento;
         this.idDiscursoProferimento = idDiscursoProferimento;
         this.idCongregacaoProferimento = idCongregacaoProferimento;
@@ -75,6 +77,14 @@ public class Proferimento implements Serializable, Comparable<Proferimento>{
 
     public void setDataProferimento(String dataProferimento) {
         this.dataProferimento = dataProferimento;
+    }
+
+    public String getDataOrdenarProferimento() {
+        return dataOrdenarProferimento;
+    }
+
+    public void setDataOrdenarProferimento(String dataOrdenarProferimento) {
+        this.dataOrdenarProferimento = dataOrdenarProferimento;
     }
 
     public String getIdOradorProferimento() {

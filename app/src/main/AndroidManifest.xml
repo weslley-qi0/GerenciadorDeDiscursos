@@ -27,7 +27,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/providers_path" />
         </provider>
-
         <activity
             android:name=".activitys.LoginActivity"
             android:label="@string/app_name"
@@ -53,11 +52,18 @@
         <activity
             android:name=".activitys.DetalheActivity"
             android:label="@string/title_activity_detalhe"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar">
+
+            <intent-filter>
+                <action android:name="com.qi0.weslley.gerenciadordediscursos.activitys.DetalheActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activitys.CadastroUsuarioActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+        <activity android:name=".activitys.PreferencesActivity" />
     </application>
 
 </manifest>

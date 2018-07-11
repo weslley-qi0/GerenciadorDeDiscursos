@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.view.menu.MenuBuilder;
@@ -32,16 +33,21 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.qi0.weslley.gerenciadordediscursos.activitys.DetalheActivity;
 import com.qi0.weslley.gerenciadordediscursos.activitys.MainActivity;
 import com.qi0.weslley.gerenciadordediscursos.config.ConfiguracaoFirebase;
 import com.qi0.weslley.gerenciadordediscursos.R;
 import com.qi0.weslley.gerenciadordediscursos.activitys.AdicionarEditarActivity;
 import com.qi0.weslley.gerenciadordediscursos.adapter.DiscursoAdapter;
 import com.qi0.weslley.gerenciadordediscursos.helper.RecyclerItemClickListener;
+import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
 import com.qi0.weslley.gerenciadordediscursos.model.Discurso;
+import com.qi0.weslley.gerenciadordediscursos.model.Orador;
+import com.qi0.weslley.gerenciadordediscursos.model.Proferimento;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -59,6 +65,7 @@ public class DiscursosFragment extends BaseFragment {
     TextView msgDiscursosEmpty;
 
     public ArrayList<Discurso> discursosList = new ArrayList();
+    List<Proferimento> proferimentosList = new ArrayList();
 
     DatabaseReference databaseReference;
     FirebaseAuth firebaseAuth;
@@ -69,6 +76,15 @@ public class DiscursosFragment extends BaseFragment {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
+        firebaseAuth = ConfiguracaoFirebase.getAuth();
+        userUID = firebaseAuth.getCurrentUser().getUid();
+        pegarDiscursosDoBanco();
+        pegarUltimoProferimestosDiscurso();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,10 +96,9 @@ public class DiscursosFragment extends BaseFragment {
         ((MainActivity) getActivity()).setSupportActionBar(toolbarDiscursos);
         toolbarDiscursos.setTitle("Discursos");
 
-        databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
-        firebaseAuth = ConfiguracaoFirebase.getAuth();
-
-        userUID = firebaseAuth.getCurrentUser().getUid();
+        //databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
+        //firebaseAuth = ConfiguracaoFirebase.getAuth();
+        //userUID = firebaseAuth.getCurrentUser().getUid();
 
         setHasOptionsMenu(true);
 
@@ -95,7 +110,7 @@ public class DiscursosFragment extends BaseFragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
 
-        adapter = new DiscursoAdapter(discursosList, getContext());
+        adapter = new DiscursoAdapter(discursosList, proferimentosList, getContext());
 
         recyclerView.setAdapter(adapter);
 
@@ -106,7 +121,12 @@ public class DiscursosFragment extends BaseFragment {
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-
+                List<Discurso> discursosListaAtualizada = adapter.getDiscursos();
+                discursoSelecionado = (Discurso) discursosListaAtualizada.get(position);
+                Intent intentDiscursoDealhes = new Intent(getActivity(), DetalheActivity.class);
+                intentDiscursoDealhes.putExtra("qualFragmentAbrir", "DetalheDiscursoFragment");
+                intentDiscursoDealhes.putExtra("discursoSelecionado", discursoSelecionado);
+                startActivity(intentDiscursoDealhes);
             }
 
             @Override
@@ -158,7 +178,7 @@ public class DiscursosFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-        pegarDiscursosDoBanco();
+
     }
 
     @Override
@@ -169,7 +189,10 @@ public class DiscursosFragment extends BaseFragment {
 
     public void pegarDiscursosDoBanco() {
 
-        valueEventListenerDiscursos = databaseReference.child("user_data").child(userUID).child("discursos").addValueEventListener(new ValueEventListener() {
+        valueEventListenerDiscursos = databaseReference.child("user_data")
+                .child(userUID)
+                .child("discursos")
+                .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 discursosList.clear();
@@ -198,6 +221,38 @@ public class DiscursosFragment extends BaseFragment {
         });
     }
 
+    private void pegarUltimoProferimestosDiscurso() {
+
+        databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
+        databaseReference.child("user_data")
+                .child(userUID)
+                .child("proferimentos")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        proferimentosList.clear();
+                        for (DataSnapshot dados : dataSnapshot.getChildren()){
+                            Proferimento proferimento = dados.getValue(Proferimento.class);
+                            proferimentosList.add(proferimento);
+                        }
+                        Collections.sort(proferimentosList, new Comparator<Proferimento>() {
+                                    @Override
+                                    public int compare(Proferimento o1, Proferimento o2) {
+                                        return o1.getDataOrdenarProferimento().compareTo(o2.getDataOrdenarProferimento());
+                                    }
+                                }
+                        );
+                        Collections.reverse(proferimentosList);
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
     public void pequisarDiscursos(String texto){
 
         ArrayList<Discurso> discursosListaPesquisa = new ArrayList<>();
@@ -212,13 +267,13 @@ public class DiscursosFragment extends BaseFragment {
             }
         }
 
-        adapter = new DiscursoAdapter(discursosListaPesquisa, getContext());
+        adapter = new DiscursoAdapter(discursosListaPesquisa, proferimentosList, getContext());
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
 
     public void recaregarDiscursos(){
-        adapter = new DiscursoAdapter(discursosList, getContext());
+        adapter = new DiscursoAdapter(discursosList, proferimentosList, getContext());
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }

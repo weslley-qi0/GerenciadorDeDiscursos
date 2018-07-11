@@ -24,8 +24,6 @@ public class Orador implements Serializable, Comparable<Orador>{
     private String email;
     private String ultimaVisita;
     private String urlFotoOrador;
-    //private List<Proferimento> proferimentos;
-    //private Strking proferimentos;
     public Map<String, Object> proferimentos = new HashMap<>();
     private float ratingOrador;
 

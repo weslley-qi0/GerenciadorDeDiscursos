@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,7 +17,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,6 +42,7 @@ import com.qi0.weslley.gerenciadordediscursos.adapter.CongregacaoAdapter;
 import com.qi0.weslley.gerenciadordediscursos.helper.RecyclerItemClickListener;
 import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
+import com.qi0.weslley.gerenciadordediscursos.model.Proferimento;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,6 +65,7 @@ public class CongregacoesFragment extends BaseFragment{
     Congregacao congregacaoSelecionada;
     ArrayList<Orador> oradoresDaCongregacaoClicada = new ArrayList<>();
     public ArrayList<Congregacao> congregacoesList = new ArrayList();
+    private List<Proferimento> proferimentoList;
     ArrayList<Orador> oradoresList = new ArrayList();
 
     String idCongregacaoSelecionada;
@@ -161,6 +161,7 @@ public class CongregacoesFragment extends BaseFragment{
         super.onStart();
         pegarCongregacoesDoBanco();
         pegarQuantidadeOradores();
+        proferimentoList = Proferimento.pegarProferimentosDoBanco(userUID);
     }
 
     @Override
@@ -249,7 +250,7 @@ public class CongregacoesFragment extends BaseFragment{
         recyclerViewDialogo.setLayoutManager(layoutManagerDialogo);
         recyclerViewDialogo.setHasFixedSize(true);
 
-        oradorAdaper = new OradorAdaper(oradoresList, congregacoesList, getContext());
+        oradorAdaper = new OradorAdaper(oradoresList, proferimentoList, congregacoesList, getContext());
 
         recyclerViewDialogo.setAdapter(oradorAdaper);
 

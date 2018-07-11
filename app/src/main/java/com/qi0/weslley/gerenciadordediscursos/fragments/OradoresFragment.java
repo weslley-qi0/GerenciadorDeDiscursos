@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.view.menu.MenuBuilder;
@@ -44,9 +45,11 @@ import com.qi0.weslley.gerenciadordediscursos.adapter.OradorAdaper;
 import com.qi0.weslley.gerenciadordediscursos.helper.RecyclerItemClickListener;
 import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
+import com.qi0.weslley.gerenciadordediscursos.model.Proferimento;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -66,6 +69,7 @@ public class OradoresFragment extends BaseFragment {
 
     public ArrayList<Orador> oradoresList = new ArrayList();
     ArrayList congregacaoList = new ArrayList();
+    List<Proferimento> proferimentosList = new ArrayList();
 
     DatabaseReference databaseReference;
     FirebaseAuth firebaseAuth;
@@ -77,6 +81,16 @@ public class OradoresFragment extends BaseFragment {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
+        firebaseAuth = ConfiguracaoFirebase.getAuth();
+        userUID = firebaseAuth.getCurrentUser().getUid();
+        pegarCongegacoesDoBanco();
+        pegarOradores();
+        pegarUltimaVisitaOrador();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -91,10 +105,9 @@ public class OradoresFragment extends BaseFragment {
 
         setHasOptionsMenu(true);
 
-        databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
-        firebaseAuth = ConfiguracaoFirebase.getAuth();
-
-        userUID = firebaseAuth.getCurrentUser().getUid();
+        //databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
+        //firebaseAuth = ConfiguracaoFirebase.getAuth();
+        //userUID = firebaseAuth.getCurrentUser().getUid();
 
         imgOradoresEmpty = view.findViewById(R.id.img_oradores_empty);
         msgOradoresEmpty = view.findViewById(R.id.msg_img_oradores_empty_empty);
@@ -104,7 +117,7 @@ public class OradoresFragment extends BaseFragment {
         //recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
 
-        adapter = new OradorAdaper(oradoresList, congregacaoList, getContext());
+        adapter = new OradorAdaper(oradoresList, proferimentosList, congregacaoList, getContext());
 
         recyclerView.setAdapter(adapter);
 
@@ -158,8 +171,6 @@ public class OradoresFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-        pegarCongegacoesDoBanco();
-        pegarOradores();
     }
 
     @Override
@@ -240,6 +251,30 @@ public class OradoresFragment extends BaseFragment {
 
     }
 
+    private void pegarUltimaVisitaOrador() {
+
+        databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
+        databaseReference.child("user_data")
+                .child(userUID)
+                .child("proferimentos")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        proferimentosList.clear();
+                        for (DataSnapshot dados : dataSnapshot.getChildren()){
+                            Proferimento proferimento = dados.getValue(Proferimento.class);
+                            proferimentosList.add(proferimento);
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
     private void deleteImagePerfilOrador() {
 
         storageReference = ConfiguracaoFirebase.getFirebaseStorage();
@@ -276,13 +311,13 @@ public class OradoresFragment extends BaseFragment {
             }
         }
 
-        adapter = new OradorAdaper(oradoresListaPesquisa, congregacaoList, getContext());
+        adapter = new OradorAdaper(oradoresListaPesquisa, proferimentosList, congregacaoList, getContext());
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
 
     public void recaregarOradores(){
-        adapter = new OradorAdaper(oradoresList, congregacaoList, getContext());
+        adapter = new OradorAdaper(oradoresList, proferimentosList, congregacaoList, getContext());
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }

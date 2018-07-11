@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -102,7 +103,7 @@ public class AgendaFragment extends BaseFragment {
         databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
         firebaseAuth = ConfiguracaoFirebase.getAuth();
         userUID = firebaseAuth.getCurrentUser().getUid();
-        sharedPreferences = getActivity().getSharedPreferences(KEY_PREFERENCE, Context.MODE_PRIVATE);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
         calendar = Calendar.getInstance(); //Cria uma Instancia de Calendar
         year = calendar.get(Calendar.YEAR);
@@ -133,8 +134,6 @@ public class AgendaFragment extends BaseFragment {
 
                 if (position == anos.indexOf("Agenda " + anoSpinner)){
                     tv.setTextColor(getResources().getColor(R.color.colorAccent));
-                    //tv.setBackgroundColor(getResources().getColor(R.color.backgroud_recycle_agenda));
-                    //tv.setTypeface(Typeface.DEFAULT_BOLD);
                 }else {
                     tv.setBackgroundResource(R.drawable.spinner_item_border);
                 }
@@ -146,14 +145,20 @@ public class AgendaFragment extends BaseFragment {
         spinneradapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
         spinner.setAdapter(spinneradapter);
 
-
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
 
                 switch (spinner.getSelectedItem().toString()) {
                     case "Nova Agenda":
-                        addNovaAgenda();
+                        String diaDaReuniao = sharedPreferences.getString("key_dia_reuniao", null);
+                        if (diaDaReuniao  == null || diaDaReuniao.equals("")){
+                            dialogoEscolherDiaDaReuniao();
+                        }else {
+                            addNovaAgenda();
+                            atualizarView();
+                        }
+                        //addNovaAgenda();
                         break;
                 }
 
@@ -172,6 +177,15 @@ public class AgendaFragment extends BaseFragment {
 
                 //setupViewPager(viewPager);
                 //adapter.notifyDataSetChanged();
+                //sharedPreferences = getActivity().getSharedPreferences(KEY_PREFERENCE, Context.MODE_PRIVATE);
+
+                /*String diaDaReuniao = sharedPreferences.getString("key_dia_reuniao", null);
+                if (diaDaReuniao  == null || diaDaReuniao.equals("")){
+                    dialogoEscolherDiaDaReuniao();
+                }else {
+                    atualizarView();
+                }*/
+
                 atualizarView();
             }
 
@@ -199,6 +213,38 @@ public class AgendaFragment extends BaseFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         atualizarView();
+    }
+
+    private void dialogoEscolherDiaDaReuniao() {
+        AlertDialog.Builder alertbox = new AlertDialog.Builder(getContext());
+        alertbox.setCancelable(false);
+        alertbox.setTitle("Escolha o dia de sua Reunião");
+        alertbox.setSingleChoiceItems(R.array.dias_reuniao, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                String diaDaReuniao = "";
+                switch (which) {
+                    case 0:
+                        diaDaReuniao = "7";
+                        break;
+                    case 1:
+                        diaDaReuniao = "1";
+                        break;
+
+                }
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("key_dia_reuniao", diaDaReuniao);
+                editor.apply();
+
+                String diaDaReuniao3 = sharedPreferences.getString("key_dia_reuniao", "1");
+
+                addNovaAgenda();
+                dialog.dismiss();
+            }
+        });
+
+        alertbox.show();
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -234,6 +280,22 @@ public class AgendaFragment extends BaseFragment {
                 }
             }
         }
+        
+        // Todo estudar esse aloritimo depois
+       /* if (anosList.size() > 5){
+            initList(year - 2, Integer.parseInt(anos.get(anos.size() - 2).substring(7, 11)) + 5);
+            while (anosList.size() > 5){
+                for (String ano : anos) {
+                    if (!ano.equals("Nova Agenda")) {
+                        int a = Integer.parseInt(ano.substring(7, 11));
+                        if (anosList.contains(a)) {
+                            anosList.remove(anosList.size() - 1);
+                        }
+                    }
+                }
+
+            }
+        }*/
 
         Integer[] arrayAnos = anosList.toArray(new Integer[anosList.size()]);
         final String[] arrayAnosString = new String[arrayAnos.length];
@@ -256,7 +318,7 @@ public class AgendaFragment extends BaseFragment {
                         anoSpinner = Integer.parseInt(valor);
                         //spinneradapter.notifyDataSetChanged();
 
-                        sharedPreferences = getActivity().getSharedPreferences(KEY_PREFERENCE, Context.MODE_PRIVATE);
+                        //sharedPreferences = getActivity().getSharedPreferences(KEY_PREFERENCE, Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putInt("anoSelecionado", anosList.get(which));
                         editor.apply();
@@ -359,9 +421,13 @@ public class AgendaFragment extends BaseFragment {
         //DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
         DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
 
+        //sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String diaDaReuniao = sharedPreferences.getString("key_dia_reuniao", "1");
+
         do {
             // o dia da semana ecolhido é domingo?
-            if (c.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+            //if (c.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+            if (c.get(Calendar.DAY_OF_WEEK) == Integer.parseInt(diaDaReuniao)) {
                 SimpleDateFormat dataSDF = new SimpleDateFormat("dd-MM-yyyy");
                 SimpleDateFormat mesSDF = new SimpleDateFormat("MM");
                 String dataFormatada = dataSDF.format(c.getTime());

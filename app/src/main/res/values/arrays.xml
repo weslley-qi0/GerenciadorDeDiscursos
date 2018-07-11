@@ -5,4 +5,20 @@
         <item>@string/tirar_foto</item>
         <item>@string/escolher_foto</item>
     </string-array>
+
+    <string-array name="dias_reuniao">
+        <item>Sabado</item>
+        <item>Domingo</item>
+    </string-array>
+
+    <string-array name="dias_reuniao_value">
+        <item>7</item>
+        <item>1</item>
+    </string-array>
+
+    <!--<string-array name="dias_reuniao_value">
+        <item>Calendar.SATURDAY</item>
+        <item>Calendar.SUNDAY</item>
+    </string-array>-->
+
 </resources>

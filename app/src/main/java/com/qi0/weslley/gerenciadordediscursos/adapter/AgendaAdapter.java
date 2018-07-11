@@ -14,11 +14,8 @@ import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
 import com.qi0.weslley.gerenciadordediscursos.model.Discurso;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -79,9 +76,12 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHold
         holder.tvMes.setText(mesFormatado.toUpperCase());
         holder.tvAno.setText(anoFormatado);
 
-        holder.agendaCongregacao.setText("Congregação: " + pegarNomeCongregacao(agenda));
+        holder.agendaCongregacao.setText(pegarNomeCongregacao(agenda));
         holder.agendaOrador.setText(pegarNomeOrador(agenda));
-        holder.agendaDiscurso.setText("Tema: " + pegarTemaDiscurso(agenda));
+        //holder.agendaDiscurso.setText("Tema: " + pegarTemaDiscurso(agenda));
+
+        holder.agendaDiscurso.setText(pegarDiscurso(agenda).getTema());
+        holder.numeroDiscurso.setText(pegarDiscurso(agenda).getNumero());
     }
 
     @Override
@@ -91,7 +91,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHold
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvDia, tvMes, tvAno, agendaOrador, agendaCongregacao, agendaDiscurso;
+        TextView tvDia, tvMes, tvAno, agendaOrador, agendaCongregacao, agendaDiscurso, numeroDiscurso;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -99,10 +99,10 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHold
             tvDia = itemView.findViewById(R.id.tv_dia_agenda_lis);
             tvMes = itemView.findViewById(R.id.tv_mes_agenda_list);
             tvAno = itemView.findViewById(R.id.tv_ano_agenda_list);
-            agendaCongregacao = itemView.findViewById(R.id.tv_agenda_congregacao);
             agendaOrador = itemView.findViewById(R.id.tv_agenda_orador);
+            agendaCongregacao = itemView.findViewById(R.id.tv_agenda_congregacao);
             agendaDiscurso = itemView.findViewById(R.id.tv_agenda_tema);
-
+            numeroDiscurso = itemView.findViewById(R.id.tv_agenda_numero_tema);
         }
     }
 
@@ -147,5 +147,19 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHold
             }
         }
         return temaDiscurso;
+    }
+
+    private Discurso pegarDiscurso(Agenda agenda){
+        Discurso discursoAgenda = new Discurso();
+        for (Discurso discurso : discursoList){
+            if (discurso.getIdDiscurso() != null) {
+                String idDiscurso = discurso.getIdDiscurso();
+                if (idDiscurso.equals(agenda.getIdDiscurso())) {
+                    discursoAgenda = discurso;
+                    return discursoAgenda;
+                }
+            }
+        }
+        return discursoAgenda;
     }
 }

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.DiscursosFragment">
+    tools:context=".fragments.OradoresFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -12,31 +12,32 @@
         <include layout="@layout/toolbar_pincipal" />
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycle_view_discursos"
-            android:layout_width="match_parent"
+            android:id="@+id/recycle_view_oradores"
+            android:layout_centerInParent="true"
+            android:layout_width="800dp"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginBottom="2dp"
             android:layout_marginTop="55dp" />
 
         <ImageView
-            android:id="@+id/img_discusos_empty"
+            android:id="@+id/img_oradores_empty"
             android:layout_width="110dp"
             android:layout_height="110dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/img_discursos"
+            android:src="@drawable/img_oradores"
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/msg_discurso_empty"
+            android:id="@+id/msg_img_oradores_empty_empty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/img_discusos_empty"
+            android:layout_below="@id/img_oradores_empty"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:layout_marginTop="8dp"
-            android:text="Ainda não há Discusos cadastrados!"
+            android:text="Ainda não há Oradores cadastradas!"
             android:textSize="18sp"
             android:textStyle="italic"
             android:visibility="gone" />

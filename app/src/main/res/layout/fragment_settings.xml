@@ -18,19 +18,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:layout_above="@id/bt_criar_agenda"
+            android:layout_above="@id/bt_configuracoes"
             android:background="@drawable/background_button_cadastro"
             android:text="Deslogar"
             android:textColor="@color/white" />
 
         <Button
-            android:id="@+id/bt_criar_agenda"
+            android:id="@+id/bt_configuracoes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_margin="10dp"
-            android:background="@drawable/background_button_cadastro"
-            android:text="Criar Agenda"
+            android:background="#ff0900"
+            android:text="Configurações"
             android:textColor="@color/white" />
 
     </RelativeLayout>

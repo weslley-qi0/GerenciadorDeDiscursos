@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Dia Da Reunião">
+
+        <ListPreference
+            android:entries="@array/dias_reuniao"
+            android:entryValues="@array/dias_reuniao_value"
+            android:key="key_dia_reuniao"
+            android:summary="Sabado"
+            android:title="Dia da Reunião" />
+
+        <Preference
+            android:summary="Selecione uma Ano para Exclur a Agenda"
+            android:title="Deletar Agenda">
+
+            <intent android:action="com.qi0.weslley.gerenciadordediscursos.activitys.DetalheActivity">
+                <extra
+                    android:name="qualFragmentAbrir"
+                    android:value="listaDeAnosAgenda" />
+            </intent>
+        </Preference>
+
+        <Preference
+            android:key="key_exit"
+            android:summary="Click aqui para sair da Conta"
+            android:title="Sair da Conta" />
+
+    </PreferenceCategory>
+
+    <PreferenceScreen
+        android:persistent="false"
+        android:summary="Selecione uma Ano para Exclur a Agenda"
+        android:title="Sobre">
+
+        <Preference
+            android:summary="Ajude o desenvolvedor"
+            android:title="Donativo">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://www.jw.org" />
+        </Preference>
+
+        <Preference
+            android:summary="Enviar um email para o Desenvolvedor"
+            android:title="Contatar o desenvolvedor">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="mailto:weslleyqi0@gmail.com" />
+        </Preference>
+
+        <Preference
+            android:summary="Recomendar o aplicativo"
+            android:title="Recomendar">
+            <intent
+                android:action="android.intent.action.SEND"
+                android:mimeType="text/*">
+                <extra
+                    android:name="android.intent.extra.TEXT"
+                    android:value="Aqui ficará o Link do App"/>
+            </intent>
+
+        </Preference>
+
+        <Preference android:title="Classificar"
+            android:summary="Classificar o aplicativo">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="http://www.jw.org" />
+        </Preference>
+
+        <Preference android:title="Mais aplicativos"
+            android:summary="Mostra todos aplicativos do desenvolvedor">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="http://www.jw.org" />
+        </Preference>
+
+        <Preference android:title="Politica de privacidade"
+            android:summary="Toque aqui para mais informaçoes">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="http://www.jw.org" />
+        </Preference>
+
+        <Preference android:title="Versão"
+            android:summary="1.0">
+        </Preference>
+
+    </PreferenceScreen>
+
+
+</PreferenceScreen>

@@ -63,7 +63,6 @@ public class AdicionarEditarActivity extends BaseActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_pricipal);
         setSupportActionBar(toolbar);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         firebaseAuth = ConfiguracaoFirebase.getAuth();
         databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
@@ -83,10 +82,8 @@ public class AdicionarEditarActivity extends BaseActivity {
             case "AddCongregacaoFragment":
                 dialogoAddCongregacao();
                 fab.hide();
-
                 break;
             case "AddOradorFragment":
-
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("oradorSelecionado", oradorSelecionado);
                 bundle.putSerializable("congregacaoSelecionada", congregacaoSelecionada);
@@ -94,45 +91,12 @@ public class AdicionarEditarActivity extends BaseActivity {
                 addEditarOradorFragment.setArguments(bundle);
                 replaceFragment(R.id.fragment_container_add_editar, addEditarOradorFragment);
                 getSupportActionBar().setTitle("Novo Orador");
-
                 break;
             case "AddDiscursosFragment":
-
                 dialogoAddDiscurso();
                 fab.hide();
-
                 break;
         }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        for (int permissaoResultado : grantResults) {
-            if (permissaoResultado == PackageManager.PERMISSION_DENIED) {
-                alertaValidacaoPermissao();
-            }
-        }
-
-    }
-
-    private void alertaValidacaoPermissao() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Permissões Negadas");
-        builder.setMessage("Para utilizar o app é necessário aceitar as permissões");
-        builder.setCancelable(false);
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
-
     }
 
     @SuppressLint("CutPasteId")
@@ -152,7 +116,6 @@ public class AdicionarEditarActivity extends BaseActivity {
             }
         });
 
-        //getSupportActionBar().setTitle("");
         getSupportActionBar().hide();
 
         edtNomeCongregacao = dialogoView.findViewById(R.id.edt_dialog_add_nome_congregação);
@@ -232,7 +195,6 @@ public class AdicionarEditarActivity extends BaseActivity {
                     b.setTextColor(getResources().getColor(R.color.green_500));
                 } else {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-
                 }
 
             }
@@ -250,59 +212,16 @@ public class AdicionarEditarActivity extends BaseActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-
                 if (s.length() >= 1) {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
                     Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                     b.setTextColor(getResources().getColor(R.color.green_500));
                 } else {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-
                 }
 
             }
         });
-    }
-
-    public void salvarCongregacao() {
-
-        if (!nomeCongregacao.isEmpty()) {
-            if (!cidadeCongregacao.isEmpty()) {
-
-                congregacaoNova = new Congregacao();
-                congregacaoNova.setIdCongregacao(idCongregacao);
-                congregacaoNova.setNomeCongregacao(nomeCongregacao);
-                congregacaoNova.setCidadeCongregação(cidadeCongregacao);
-
-                databaseReference.child("user_data")
-                        .child(userUID)
-                        .child("congregacoes")
-                        .child(idCongregacao)
-                        .setValue(congregacaoNova);
-
-                if (congregacaoSelecionada != null){
-                    Toasty.success(AdicionarEditarActivity.this, "Congregação Atualizada", Toast.LENGTH_SHORT).show();
-                }else {
-                    Toasty.success(AdicionarEditarActivity.this, "Congregação Salva", Toast.LENGTH_SHORT).show();
-                }
-
-                finish();
-            } else {
-                Toasty.info(AdicionarEditarActivity.this, "Adicione uma cidade!", Toast.LENGTH_SHORT).show();
-                if (!nomeCongregacao.isEmpty()){
-                    dialogoAddCongregacao();
-                    edtNomeCongregacao.setText(nomeCongregacao);
-                    edtCidadeCongregacao.setText("");
-                }
-            }
-        } else {
-            Toasty.info(AdicionarEditarActivity.this, "Adicione o nome da congregação!", Toast.LENGTH_SHORT).show();
-            if (!cidadeCongregacao.isEmpty()){
-                dialogoAddCongregacao();
-                edtCidadeCongregacao.setText(cidadeCongregacao);
-                edtNomeCongregacao.setText("");
-            }
-        }
     }
 
     private void dialogoAddDiscurso() {
@@ -433,6 +352,47 @@ public class AdicionarEditarActivity extends BaseActivity {
         });
     }
 
+    public void salvarCongregacao() {
+
+        if (!nomeCongregacao.isEmpty()) {
+            if (!cidadeCongregacao.isEmpty()) {
+
+                congregacaoNova = new Congregacao();
+                congregacaoNova.setIdCongregacao(idCongregacao);
+                congregacaoNova.setNomeCongregacao(nomeCongregacao);
+                congregacaoNova.setCidadeCongregação(cidadeCongregacao);
+
+                databaseReference.child("user_data")
+                        .child(userUID)
+                        .child("congregacoes")
+                        .child(idCongregacao)
+                        .setValue(congregacaoNova);
+
+                if (congregacaoSelecionada != null){
+                    Toasty.success(AdicionarEditarActivity.this, "Congregação Atualizada", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toasty.success(AdicionarEditarActivity.this, "Congregação Salva", Toast.LENGTH_SHORT).show();
+                }
+
+                finish();
+            } else {
+                Toasty.info(AdicionarEditarActivity.this, "Adicione uma cidade!", Toast.LENGTH_SHORT).show();
+                if (!nomeCongregacao.isEmpty()){
+                    dialogoAddCongregacao();
+                    edtNomeCongregacao.setText(nomeCongregacao);
+                    edtCidadeCongregacao.setText("");
+                }
+            }
+        } else {
+            Toasty.info(AdicionarEditarActivity.this, "Adicione o nome da congregação!", Toast.LENGTH_SHORT).show();
+            if (!cidadeCongregacao.isEmpty()){
+                dialogoAddCongregacao();
+                edtCidadeCongregacao.setText(cidadeCongregacao);
+                edtNomeCongregacao.setText("");
+            }
+        }
+    }
+
     private void salvarDiscurso() {
 
         if (!numeroDiscurso.isEmpty()) {
@@ -444,6 +404,7 @@ public class AdicionarEditarActivity extends BaseActivity {
                 discursoNovo.setIdDiscurso(idDisurso);
                 discursoNovo.setNumero(numeroDiscursoFormatado);
                 discursoNovo.setTema(temaDiscurso);
+                //discursoNovo.setUltimoProferimento("");
 
                 databaseReference.child("user_data")
                         .child(userUID)
@@ -476,5 +437,34 @@ public class AdicionarEditarActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        for (int permissaoResultado : grantResults) {
+            if (permissaoResultado == PackageManager.PERMISSION_DENIED) {
+                alertaValidacaoPermissao();
+            }
+        }
+
+    }
+
+    private void alertaValidacaoPermissao() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Permissões Negadas");
+        builder.setMessage("Para utilizar o app é necessário aceitar todas as permissões");
+        builder.setCancelable(false);
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
 }
 

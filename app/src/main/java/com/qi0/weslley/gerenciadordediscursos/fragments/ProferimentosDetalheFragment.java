@@ -15,20 +15,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.qi0.weslley.gerenciadordediscursos.R;
-import com.qi0.weslley.gerenciadordediscursos.adapter.DiscursoAdapter;
-import com.qi0.weslley.gerenciadordediscursos.adapter.ProferimentosAdapter;
+import com.qi0.weslley.gerenciadordediscursos.adapter.OradorProferimentosAdapter;
 import com.qi0.weslley.gerenciadordediscursos.config.ConfiguracaoFirebase;
-import com.qi0.weslley.gerenciadordediscursos.model.Agenda;
-import com.qi0.weslley.gerenciadordediscursos.model.Congregacao;
 import com.qi0.weslley.gerenciadordediscursos.model.Discurso;
 import com.qi0.weslley.gerenciadordediscursos.model.Orador;
 import com.qi0.weslley.gerenciadordediscursos.model.Proferimento;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -42,7 +39,7 @@ public class ProferimentosDetalheFragment extends BaseFragment {
     List<Discurso> discursosList = new ArrayList();
     List<Proferimento> proferimentosList = new ArrayList();
 
-    ProferimentosAdapter proferimentosAdapter;
+    OradorProferimentosAdapter oradorProferimentosAdapter;
 
     String userUID;
     Orador oradorSelecionado;
@@ -86,9 +83,9 @@ public class ProferimentosDetalheFragment extends BaseFragment {
         recyclerView.setHasFixedSize(true);
         pegarListaDeProferimestosOradorSelecionado();
 
-        proferimentosAdapter = new ProferimentosAdapter(proferimentosList, discursosList, getContext());
+        oradorProferimentosAdapter = new OradorProferimentosAdapter(proferimentosList, discursosList, getContext());
 
-        recyclerView.setAdapter(proferimentosAdapter);
+        recyclerView.setAdapter(oradorProferimentosAdapter);
 
         return view;
     }
@@ -112,10 +109,17 @@ public class ProferimentosDetalheFragment extends BaseFragment {
                             Proferimento proferimento = dados.getValue(Proferimento.class);
                             if (proferimento.getIdOradorProferimento().equals(oradorSelecionado.getId())) {
                                 proferimentosList.add(proferimento);
-                                //Collections.sort(proferimentosList);
                             }
                         }
-                        proferimentosAdapter.notifyDataSetChanged();
+                        Collections.sort(proferimentosList, new Comparator<Proferimento>() {
+                                    @Override
+                                    public int compare(Proferimento o1, Proferimento o2) {
+                                        return o1.getDataOrdenarProferimento().compareTo(o2.getDataOrdenarProferimento());
+                                    }
+                                }
+                        );
+                        Collections.reverse(proferimentosList);
+                        oradorProferimentosAdapter.notifyDataSetChanged();
                     }
 
                     @Override

@@ -6,6 +6,7 @@
 
     <color name="backgroud_recycle_agenda">#c2cac9c9</color>
     <color name="backgroud_card">#2D3035</color>
+    <color name="selector_spinner">#f4f4f4</color>
     <color name="backgroud_card_pressed">#68ffab03</color>
     <color name="backgroud_form_orador">#abf1eeee</color>
 
